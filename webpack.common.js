@@ -30,7 +30,7 @@ module.exports = {
         new CopyPlugin({
             patterns: [
                 { from: 'src/client/html/index.html', to: './' },
-                { from: 'src/client/html/generate_did.html', to: './' }                
+                { from: 'src/client/html/generate_did.html', to: './' }
             ]
         }),
         new NodemonPlugin()            

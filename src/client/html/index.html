@@ -2,10 +2,36 @@
 <html>
 <head>
     <title>SIOP Tools</title>
+    <link rel="stylesheet" type="text/css" href="../scss/style.css">    
 </head>
 <body>
-    <h1>SIOP Tools</h1>
-    <button class="action-button" id="discover_button" >Discover22</button> 
+    <div class="wrapper">
+        <div class="header">
+            <h1>SIOP Tools</h1>
+        </div>
+        <div class="content">
+            <div class="content_middle">
+                <label class="lbl_basic">You could create an Ethereum adderes along with a private key and register that as a Decentralised Identity here. Click 'Generate DID' to create a DID and 'Resolve DID' to see the DID Document linked to that.</label>
+                <button class="btn_basic" id="generate_did" >Generate DID</button>
+                <label class="lbl_basic">Address</label>
+                <textarea class="txt_single" readonly="true" id="acc_address" ></textarea>
+                <label class="lbl_basic">Private Key</label>                
+                <textarea class="txt_single" readonly="true" id="acc_pvtkey" ></textarea>
+                <label class="lbl_basic">Decentralise Identity (DID)</label>                
+                <textarea class="txt_single" readonly="true" id="acc_did" ></textarea>
+                <button class="btn_basic" id="resolve_did" >Resolve DID</button>
+                <label class="lbl_basic">DID Document</label>                
+                <textarea class="txt_multi" readonly="true" id="did_doc" ></textarea>
+            </div>
+        </div>
+        <div class="footer" >
+          <span>Self Issued OpenID Connect Provider(SIOP)</span>
+          <div>
+            <span><a href="https://github.com/RadicalLedger/did-siop-chrome-ext">SIOP on GitHub</a></span>
+            <!-- <span>Developed by <a href="http://www.radicalledger.com">Radical Ledger Technologies</a></span> -->
+        </div>
+        </div>
+      </div>    
     <script src="app.bundle.js"></script>
 </body>
 </html>
