@@ -17,7 +17,8 @@ let RESOLVER_URL = 'https://uniresolver.io/1.0/identifiers/';
 let provider = new W3.providers.HttpProvider(PROVIDER_NODE);
 
 var app = express();
-app.use('/',express.static(__dirname + 'src/client'));
+// app.use('/',express.static(__dirname + '/build'));
+app.use('/',express.static('./build'));
 app.get('/', function (req, res) {
     res.redirect('/pageIndex');
 });
@@ -29,12 +30,12 @@ app.get('/resolve_did',apiResolveDID);
 
 function pageIndex(req, res, next) {
     console.log("indexPage Invoked");
-    res.sendFile('index.html', { root: './src/client' });
+    res.sendFile('index.html', { root: './src/client/html' });
 }
 
 function pageGenerateDID(req, res, next) {
     console.log("generateDIDPage Invoked");
-    res.sendFile('generate_did.html', { root: './src/client' });
+    res.sendFile('generate_did.html', { root: './src/client/html' });
 }
 
 function apiGenerateDID(req, res, next) {
