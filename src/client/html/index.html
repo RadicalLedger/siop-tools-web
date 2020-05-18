@@ -11,14 +11,14 @@
         </div>
         <div class="content">
             <div class="content_middle">
-                <label class="lbl_basic">You could create an Ethereum adderes along with a private key and register that as a Decentralised Identity here. Click 'Generate DID' to create a DID and 'Resolve DID' to see the DID Document linked to that.</label>
+                <label class="lbl_basic">You could create an Ethereum adderes along with a private key and register that as a Decentralised Identity here. Click 'Generate DID' to create a DID and 'Resolve DID' to see the DID Document linked to that. None of the info leaves your browser, so it is perfectly secure to use this service.</label>
                 <button class="btn_basic" id="generate_did" >Generate DID</button>
                 <label class="lbl_basic">Address</label>
                 <textarea class="txt_single" readonly="true" id="acc_address" ></textarea>
                 <label class="lbl_basic">Private Key</label>                
                 <textarea class="txt_single" readonly="true" id="acc_pvtkey" ></textarea>
                 <label class="lbl_basic">Decentralise Identity (DID)</label>                
-                <textarea class="txt_single" readonly="true" id="acc_did" ></textarea>
+                <textarea class="txt_single" id="acc_did" placeholder="paste a DID here to resolve its document..."></textarea>
                 <button class="btn_basic" id="resolve_did" >Resolve DID</button>
                 <label class="lbl_basic">DID Document info</label>                
                 <textarea class="txt_multi" readonly="true" id="did_doc" ></textarea>
