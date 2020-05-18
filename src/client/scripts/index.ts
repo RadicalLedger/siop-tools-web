@@ -50,7 +50,7 @@ function onResolveDID(){
     let did = getElementValue('acc_did');
     if (did && did !== ''){
         didResolve(did).then (doc => {
-            setElementValue('did_doc', JSON.stringify(doc));
+            setElementValue('did_doc', JSON.stringify(doc, undefined, 4));
         }).catch(err =>{
             setElementValue('did_doc', err);
         });
