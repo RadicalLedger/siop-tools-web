@@ -18,7 +18,7 @@ let provider = new W3.providers.HttpProvider(PROVIDER_NODE);
 
 var app = express();
 // app.use('/',express.static(__dirname + '/build'));
-app.use('/',express.static('./build'));
+app.use('/',express.static('./build/client'));
 app.get('/', function (req, res) {
     res.redirect('/pageIndex');
 });

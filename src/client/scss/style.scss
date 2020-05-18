@@ -33,7 +33,7 @@ html, body {
 .content_middle {
   display: flex;
   flex-direction: column; /*items get arrange in column*/
-  min-width : 400px;
+  width : 600px;
   justify-content: start; /*item arranged from top to bottom*/
   align-items: stretch; /*all items are centred*/    
 }

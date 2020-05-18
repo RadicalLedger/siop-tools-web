@@ -9,28 +9,27 @@ module.exports = {
     },
     output: {
         filename: '[name].bundle.js',
-        path: path.resolve(__dirname, 'build')
+        path: path.resolve(__dirname, 'build/client')
         },
     module: {
         rules: [{
             test: /\.tsx?$/,
-            use: 'ts-loader',
+            use: [{loader:'ts-loader',
+                    options:{
+                        transpileOnly: true,
+                        configFile: 'src/client/client_tsconfig.json'
+                    }
+                }],
             exclude: /node_modules/,}],
     },
     resolve: {
         extensions: [ '.tsx', '.ts', '.js' ],
       },    
-    // node: {
-    //     fs:"empty",
-    //     net: "empty",
-    //     tls:"empty"
-    // },    
     plugins: [
         new CleanWebpackPlugin({cleanAfterEveryBuildPatterns: ['build']}),
         new CopyPlugin({
             patterns: [
-                { from: 'src/client/html/index.html', to: './' },
-                { from: 'src/client/html/generate_did.html', to: './' }
+                { from: 'src/client/html/index.html', to: './' }
             ]
         }),
         new NodemonPlugin()            
