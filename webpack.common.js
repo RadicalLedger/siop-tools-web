@@ -1,7 +1,6 @@
 const path = require('path')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin  = require('copy-webpack-plugin');
-const NodemonPlugin = require('nodemon-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -31,7 +30,6 @@ module.exports = {
             patterns: [
                 { from: 'src/client/html/index.html', to: './' }
             ]
-        }),
-        new NodemonPlugin()            
+        })
     ]
 }
