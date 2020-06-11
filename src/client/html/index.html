@@ -1,36 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>SIOP Tools</title>
-    <link rel="stylesheet" type="text/css" href="style.css">    
+    <title>Home</title>
+    <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-    <div class="wrapper">
+    <div class="main-content-col">
         <div class="header">
-            <h1>SIOP Tools</h1>
-        </div>
-        <div class="content">
-            <div class="content_middle">
-                <label class="lbl_basic">You could create an Ethereum adderes along with a private key and register that as a Decentralised Identity here. Click 'Generate DID' to create a DID and 'Resolve DID' to see the DID Document linked to that. None of the info leaves your browser, so it is perfectly secure to use this service.</label>
-                <button class="btn_basic" id="generate_did" >Generate DID</button>
-                <label class="lbl_basic">Address</label>
-                <textarea class="txt_single" readonly="true" id="acc_address" ></textarea>
-                <label class="lbl_basic">Private Key</label>                
-                <textarea class="txt_single" readonly="true" id="acc_pvtkey" ></textarea>
-                <label class="lbl_basic">Decentralise Identity (DID)</label>                
-                <textarea class="txt_single" id="acc_did" placeholder="paste a DID here to resolve its document..."></textarea>
-                <button class="btn_basic" id="resolve_did" >Resolve DID</button>
-                <label class="lbl_basic">DID Document info</label>                
-                <textarea class="txt_multi" readonly="true" id="did_doc" ></textarea>
+            <h2>SIOP-DID Tools</h2>
+            <div class="uline-title">   </div>            
+            <div class="header-description"> 
+                Essential tools to start using Self Issued OpenID Connect Provider with Decentralised Identities. Visit <a href="http://www.didsiop.org"> didsiop.org </a> for more information and resources.
             </div>
         </div>
-        <div class="footer" >
-          <span>Self Issued OpenID Connect Provider(SIOP)</span>
-          <div>
-            <span><a href="https://github.com/RadicalLedger/did-siop-chrome-ext">SIOP on GitHub</a></span>
+        <div class="content">
+            <div class="content-menu">
+                <div class="content-menu-item" id="menu1" tabindex="-1">HOME</div>
+                <div class="content-menu-item" id="menu2" tabindex="-1">GENERATE DID</div>
+                <div class="content-menu-item" id="menu3" tabindex="-1">RESOLVE DID</div> 
+            </div>
+            <div id="lineSeparator" class="line-separator">   </div>
+            <div class="content-body" id="contentBody">
+                <div class="content-body-2">
+                    <div class="content-body-2-col1"> </div>
+                    <div class="content-body-2-col2">
+                        <div class="content-title">
+                            <h3 id="contentTitle">Tool Title</h3>
+                        </div>    
+                        <div id="contentInfo" class="content-info">
+                        </div> 
+                    </div>
+                    <div class="content-body-2-col1"> </div>                    
+                </div>                           
+            </div>
         </div>
-        </div>
-      </div>    
-    <script src="app.bundle.js"></script>
+        <div class="footer">
+            <h4>www.didsiop.org</h4>
+        </div>        
+    </div>
+    <script type="module" src="app.bundle.js"></script>
 </body>
 </html>

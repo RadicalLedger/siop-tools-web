@@ -2,13 +2,12 @@
 
 ### Build and Run
 ```
-// build for production environment
+// for production environment
 npm run build
-
-// build for development environment
-npm run dev
-
-// run the last build (production/development)
 npm run start
+
+// for development environment (with webpack)
+npm run dev:build
+npm run dev:start
 
 ```
