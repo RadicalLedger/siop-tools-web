@@ -47,7 +47,7 @@ function onGenerateDID(){
         const ethrDid = new EthrDID({address: acc.address, privateKey: acc.privateKey, provider})
         
         setElementValue('acc_address',acc.address);
-        setElementValue('acc_pvtkey',acc.privateKey);
+        setElementValue('acc_pvtkey',acc.privateKey.replace('0x', ''));
         setElementValue('acc_did',ethrDid.did);        
 
     }
