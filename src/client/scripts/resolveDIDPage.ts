@@ -4,10 +4,10 @@ console.log('client side script invoked');
 import W3 from 'web3';
 import axios from 'axios';
 
-let PROVIDER_NODE = 'https://ropsten.infura.io/chim_himidumage';
-let RESOLVER_URL = 'https://uniresolver.io/1.0/identifiers/';
+import { Resolver } from 'did-resolver'
+import { getResolver } from 'ethr-did-resolver'
 
-let provider = new W3.providers.HttpProvider(PROVIDER_NODE);
+let PROVIDER_NODE = 'https://ropsten.infura.io/ethr-did';
 
 let btn;
 
@@ -72,31 +72,23 @@ function getElementValue(obj_id:string):string{
        return element.value;
     }
 }
+
+
 function didResolve(did: string):Promise<any>{
-    let doc:any;
+    const providerConfig = { rpcUrl: PROVIDER_NODE}    
+    
+    const ethrDidResolver = getResolver(providerConfig)
+    const didResolver = new Resolver(ethrDidResolver)
 
-    return new Promise((resolve, reject)=>{
-            axios.get(RESOLVER_URL + did).then(result => {
-            if(
-                result &&
-                result.data &&
-                result.data.didDocument &&
-                result.data.didDocument['@context'] === 'https://w3id.org/did/v1' &&
-                result.data.didDocument.id == did &&
-                result.data.didDocument.authentication &&
-                result.data.didDocument.authentication.length > 0
-            ){
-                doc = result.data.didDocument;
-                resolve(doc);
-            }
-            else {
-                reject({status:'error',message:'Invalid DID Document'})
-            }
 
-        }).catch(err =>{
-            reject({status:'error',message:'Failed to retrive DID Document'})            
-        })    
-    })
+    return new Promise((res, rej)=>{
+                didResolver.resolve(did).then(doc => {                
+                res(doc);
+            }
+        ).catch(err =>{
+            rej({status:'error',message:'Failed to retrive DID Document'})            
+        })
+    })    
 }
 
 export {initPage}

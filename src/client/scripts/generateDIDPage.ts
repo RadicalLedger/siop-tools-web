@@ -5,7 +5,6 @@ import EthrDID from 'ethr-did';
 import W3 from 'web3';
 
 let PROVIDER_NODE = 'https://ropsten.infura.io/chim_himidumage';
-let RESOLVER_URL = 'https://uniresolver.io/1.0/identifiers/';
 
 let provider = new W3.providers.HttpProvider(PROVIDER_NODE);
 

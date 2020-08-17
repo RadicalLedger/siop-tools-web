@@ -8,7 +8,6 @@
     "build:s": "tsc -p tsconfig.json",
     "build": "run-p build:c build:s",
     "start": "node build/server/server.js",
-
     "dev:build:c": "webpack --mode development --config webpack.dev.js",
     "dev:build": "run-p dev:build:c build:s",
     "dev:start:w": "webpack --watch --mode development --config webpack.dev.js",
@@ -36,8 +35,10 @@
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^6.0.0",
     "css-loader": "^3.5.3",
+    "did-resolver": "^2.1.0",
     "did-siop": "^1.1.0",
     "ethr-did": "^1.1.0",
+    "ethr-did-resolver": "^2.3.3",
     "path": "^0.12.7",
     "sass-loader": "^8.0.2",
     "style-loader": "^1.2.1",
