@@ -225,55 +225,18 @@ export default function HDWallet() {
             </Grid>
 
             <Grid item xs={12}>
-                {/* <TextField
-                    id="standard-read-only-input"
-                    label="Random Seed"
-                    variant="outlined"
-                    fullWidth
-                    value={walletState.seed}
-                    InputProps={{
-                        readOnly: true,
-                    }}
-                /> */}
                 <TextFieldNormal label="Random Seed" value={walletState.seed} />
             </Grid>
 
             <Grid item xs={12}>
-                {/* <TextField
-                    id="standard-read-only-input"
-                    label="Master Private Key"
-                    fullWidth
-                    value={walletState.mprv}
-                    InputProps={{
-                        readOnly: true,
-                    }}
-                /> */}
                 <TextFieldNormal label="Master Private Key" value={walletState.mprv} />
             </Grid>
 
             <Grid item xs={12}>
-                {/* <TextField
-                    id="standard-read-only-input"
-                    label="Master Public Key"
-                    fullWidth
-                    value={walletState.mpub}
-                    InputProps={{
-                        readOnly: true,
-                    }}
-                /> */}
                 <TextFieldNormal label="Master Public Key" value={walletState.mpub} />
             </Grid>
 
             <Grid item xs={12}>
-                {/* <TextField
-                    id="standard-read-only-input"
-                    label="Master Chain Code"
-                    fullWidth
-                    value={walletState.mchn}
-                    InputProps={{
-                        readOnly: true,
-                    }}
-                /> */}
                 <TextFieldNormal label="Master Chain Code" value={walletState.mchn} />
             </Grid>
 
@@ -298,28 +261,10 @@ export default function HDWallet() {
             </Grid>
 
             <Grid item xs={12}>
-                {/* <TextField
-                    id="standard-read-only-input"
-                    label="Child Public Key"
-                    fullWidth
-                    value={walletState.cpub}
-                    InputProps={{
-                        readOnly: true,
-                    }}
-                /> */}
                 <TextFieldNormal label="Child Public Key" value={walletState.cpub} />
             </Grid>
 
             <Grid item xs={12}>
-                {/* <TextField
-                    id="standard-read-only-input"
-                    label="Child Chain Code"
-                    fullWidth
-                    value={walletState.cchn}
-                    InputProps={{
-                        readOnly: true,
-                    }}
-                /> */}
                 <TextFieldNormal label="Child Chain Code" value={walletState.cchn} />
             </Grid>
             {
