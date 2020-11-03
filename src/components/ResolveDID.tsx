@@ -74,6 +74,7 @@ export default function ResolveDID() {
 
                 <Grid item xs={12}>
                     <Button disabled={did === '' ? true : false}
+                    data-testid="resolveDID"
                         onClick={onResolveDID} variant="contained"
                         color="primary">Resolve DID</Button>
                 </Grid>

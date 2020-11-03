@@ -51,7 +51,7 @@ export default function GenerateDID() {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <Button onClick={generateDID} variant="contained" color="primary">Generate DID</Button>
+                    <Button data-testid="generateDID" onClick={generateDID} variant="contained" color="primary">Generate DID</Button>
                 </Grid>
 
                 <Grid item xs={12}>
