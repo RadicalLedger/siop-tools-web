@@ -87,7 +87,9 @@ function App() {
   const classes = useStyles();
 
   const handleDrawerToggle = () => {
+
     setMobileOpen(!mobileOpen);
+    
   };
 
   let currentView = (<div></div>)

@@ -65,9 +65,9 @@ export default function HDWallet() {
 
     const dispatch = useDispatch()
 
-    const handleNumBitSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleNumBitSelection = (numBit: string) => {
 
-        const val = parseInt((event.target as HTMLInputElement).value)
+        const val = parseInt(numBit)
         dispatch(setNumBits(val));
         if (walletState.seed !== '') {
             walletState.nbit = val
@@ -188,7 +188,7 @@ export default function HDWallet() {
                     <RadioGroup row aria-label="numBits"
                         name="numbits"
                         value={walletState.nbit.toString()}
-                        onChange={handleNumBitSelection}>
+                        onChange={e => handleNumBitSelection(e.target.value)}>
                         <FormControlLabel value="128" control={<Radio />} label="128 bit" />
                         <FormControlLabel value="256" control={<Radio />} label="256 bit" />
                     </RadioGroup>

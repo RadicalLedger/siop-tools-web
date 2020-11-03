@@ -5,13 +5,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
-import {rootReducer} from './redux/reducers'
-
-const store = createStore(
-  rootReducer,
-  (window as any).__REDUX_DEVTOOLS_EXTENSION__ && (window as any).__REDUX_DEVTOOLS_EXTENSION__()
-  )
+import { store } from './redux/store'
 
 document.title = 'SIOP-DID Tools'
 ReactDOM.render(
