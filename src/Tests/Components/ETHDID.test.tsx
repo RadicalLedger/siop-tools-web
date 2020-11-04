@@ -9,13 +9,15 @@ beforeAll(() => {
   
   describe("ETHDID", () => {
     it("renders correctly", () => {
-      render(<ETHDID did=""/>);
-    });
-  
-    it("renders correctly with text", () => {
-      const { getByLabelText } = render(<ETHDID did="did:ethr:0xd32482CeD4a960fffA1Fee42fF43A20D9930B214"/>);
+      const { getByLabelText } = render(<ETHDID did=""/>);
       const component = getByLabelText(/Decentralized ID/i);
       expect(component).toBeInTheDocument();
+    });
+  
+    it("renders correctly with text", () => { //failing
+      const { getByLabelText } = render(<ETHDID did="did:ethr:0xd32482CeD4a960fffA1Fee42fF43A20D9930B214"/>);
+      const component = getByLabelText(/Decentralized ID/i);
+      expect(component.getAttribute('value')).toBe("did:ethr:0xd32482CeD4a960fffA1Fee42fF43A20D9930B214");
     });
   
    });

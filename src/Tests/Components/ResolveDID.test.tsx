@@ -24,7 +24,7 @@ describe("ResolveDID", () => {
     //     fireEvent.click(screen.getByTestId('resolveDID'))
     //     await expect(screen.getByLabelText(/DID-Doc/i).textContent).not.toBe('{"status":"error","message":"Failed to retrive DID Document"}')
     // });
-    
+
     // it("should give error", async () => {//fail
     //     render(<Provider store={store}><ResolveDID /></Provider>);
     //     fireEvent.change(screen.getByTestId('resolveDID'), {
@@ -34,5 +34,7 @@ describe("ResolveDID", () => {
     //     fireEvent.click(screen.getByTestId('resolveDID'))
     //     await expect(screen.getByLabelText(/DID-Doc/i).textContent).toBe('{"status":"error","message":"Failed to retrive DID Document"}')
     // });
+
+    //Async type declarations not available
 
 });

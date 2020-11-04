@@ -9,13 +9,15 @@ beforeAll(() => {
   
   describe("DescriptionBox", () => {
     it("renders correctly", () => {
-      render(<DescriptionBox description="" />);
+      const { getByTestId } = render(<DescriptionBox description="" />);
+      const component = getByTestId('descriptionBox');
+      expect(component).toBeInTheDocument();
     });
   
-    it("renders with text", () => {
+    it("renders with text", () => { //failing
       const { getByText } = render(<DescriptionBox description="Test Description" />);
-      const component = getByText(/Test Description/i);
-      expect(component).toBeInTheDocument();
+      const component = getByText(/Test Description/i); 
+      expect(component.innerHTML).toBe("Test Description");
     });
   
    });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import TextFieldNormal from '../../components/TextFieldNormal'
 
 beforeAll(() => {
@@ -9,13 +9,15 @@ beforeAll(() => {
   
   describe("TextFieldNormal", () => {
     it("renders correctly", () => {
-      render(<TextFieldNormal label="" value=""/>);
+      render(<TextFieldNormal label="Test label" value=""/>);
+      const component = screen.getByLabelText(/Test label/i);
+      expect(component).toBeInTheDocument();
     });
   
-    // it("renders correctly with text", () => { //failing
-    //   const { getByLabelText } = render(<TextFieldNormal label="Test label" value="Test value"/>);
-    //   const component = getByLabelText(/Test label/i);
-    //   expect(component.textContent).toBe('Test value')
-    // });
+    it("renders correctly with text", () => { //failing
+      const { getByLabelText } = render(<TextFieldNormal label="Test label" value="Test value"/>);
+      const component = getByLabelText(/Test label/i);
+      expect(component.getAttribute('value')).toBe('Test value')
+    });
   
    });

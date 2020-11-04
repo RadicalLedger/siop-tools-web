@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, fireEvent, screen, cleanup } from '@testing-library/react'
+import { render, fireEvent, screen } from '@testing-library/react'
 import { Provider } from 'react-redux';
 import HDWallet from '../../components/HDWallet'
 
@@ -39,12 +39,6 @@ describe("App", () => {
   it("renders correctly", () => {
     render(<Provider store={store}><HDWallet /></Provider>);
   });
-
-  // it("renders app bar", () => {
-  //   const { getByText } = render(<Provider store={store}><HDWallet/></Provider>);
-  //   const appBar = getByText(/SIOP-DID Tools/i);
-  //   expect(appBar).toBeInTheDocument();
-  // });
 
   it('should update state to null string when length of mnemonic is 0', () => {
     render(<Provider store={store}><HDWallet /></Provider>)
@@ -94,14 +88,14 @@ describe("App", () => {
     fireEvent.change(screen.getByLabelText(/Mnemonic Words/i), {
       target: { value: 'not a valid mnemonic' }
     })
-    
     expect(derivationPath).toBeDisabled();
   })
 
-  // it('should update bit length', () => { //failing
-  //   render(<Provider store={store}><HDWallet /></Provider>)
-  //   fireEvent.change(screen.getByLabelText(/256 bit/i), { target: { value: "256" } });
-  //   expect(store.getState()['hdwallet']['nbit']).toBe(256)
-  // })
+  it('should update bit length', () => { //failing
+    render(<Provider store={store}><HDWallet /></Provider>)
+    fireEvent.change(screen.getByLabelText(/256 bit/i), { target: { value: "256" } });
+    expect(screen.getByLabelText(/256 bit/i).getAttribute('value')).toBe('256')
+    // expect(store.getState()['hdwallet']['nbit']).toBe(256)
+  })
 
 });

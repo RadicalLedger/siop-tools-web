@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import TextFieldWithCopy from '../../components/TextFieldWithCopy'
 
 beforeAll(() => {
@@ -9,13 +9,15 @@ beforeAll(() => {
   
   describe("TextFieldWithCopy", () => {
     it("renders correctly", () => {
-      render(<TextFieldWithCopy label="" value=""/>);
+      render(<TextFieldWithCopy label="Test label" value=""/>);
+      const component = screen.getByLabelText(/Test label/i);
+      expect(component).toBeInTheDocument();
     });
   
-    // it("renders correctly with text", () => { //failing
-    //   const { getByLabelText } = render(<TextFieldWithCopy label="Test label" value="Test value"/>);
-    //   const component = getByLabelText(/Test label/i);
-    //   expect(component.textContent).toBe('Test value')
-    // });
+    it("renders correctly with text", () => { //failing
+      const { getByLabelText } = render(<TextFieldWithCopy label="Test label" value="Test value"/>);
+      const component = getByLabelText(/Test label/i);
+      expect(component.getAttribute('value')).toBe('Test value')
+    });
   
    });

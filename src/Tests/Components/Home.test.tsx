@@ -8,8 +8,12 @@ beforeAll(() => {
   });
   
   describe("BTCAddress", () => {
+    
     it("renders correctly", () => {
-      render(<Home/>);
+      const { getByText } = render(<Home/>);
+      const component = getByText(/Privacy Guaranteed/i);
+      expect(component).toBeInTheDocument();
     });
+
   
    });

@@ -15,7 +15,7 @@ export default function DescriptionBox(props:{description:string}) {
     const classes = useStyles()
 
     return (
-        <Box className={classes.box}>
+        <Box data-testid="descriptionBox" className={classes.box}>
             <Typography>{props.description}</Typography>
         </Box>
     )
