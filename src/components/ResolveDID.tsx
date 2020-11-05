@@ -25,7 +25,7 @@ export default function ResolveDID() {
                 res(doc);
             }
             ).catch((err: Error) => {
-                rej({ status: 'error', message: 'Failed to retrive DID Document' })
+                rej({ status: 'error', message: 'Failed to retrieve DID Document' })
             })
         })
     }
