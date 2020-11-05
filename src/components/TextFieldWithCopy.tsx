@@ -1,22 +1,30 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { TextField, InputAdornment, ClickAwayListener, Tooltip, IconButton } from '@material-ui/core';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 
-export default function TextWithCopy(props:{label: string, value: string}) {
+export default function TextWithCopy(props: { label: string, value: string }) {
 
     const [open, setOpen] = useState(false);
+    const [context, setContext] = useState(0);
 
     const handleTooltipClose = () => {
         setOpen(false);
     };
 
     const handleTooltipOpen = () => {
+        if (window.isSecureContext) {
+            setContext(1);
+        } else {
+            setContext(0);
+        }
         setOpen(true);
     };
 
     const copyToClipboard = () => {
-        navigator.clipboard.writeText(props.value);
-      }
+        if (window.isSecureContext) {
+            navigator.clipboard.writeText(props.value);
+        }
+    }
 
     return (
         <TextField
@@ -40,7 +48,7 @@ export default function TextWithCopy(props:{label: string, value: string}) {
                                 disableFocusListener
                                 disableHoverListener
                                 disableTouchListener
-                                title="Copied"
+                                title={context === 1 ? "Copied" : "Couldn't copy"}
                             >
                                 <IconButton aria-label="delete" onClick={() => { copyToClipboard(); handleTooltipOpen(); }}>
                                     <FileCopyOutlinedIcon fontSize="small" />
