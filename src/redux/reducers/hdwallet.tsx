@@ -44,10 +44,10 @@ export default function (state: HDWallet = initialState, action: { type: string,
             return {...state, derp: action.payload};
         }
         case 'SET_CPRV': {
-            return {...state, cpub: action.payload};
+            return {...state, cprv: action.payload};
         }
         case 'SET_CPUB': {
-            return {...state, cprv: action.payload};
+            return {...state, cpub: action.payload};
         }
         case 'SET_CCHN': {
             return {...state, cchn: action.payload};
