@@ -14,7 +14,7 @@ beforeAll(() => {
       expect(component).toBeInTheDocument();
     });
   
-    it("renders correctly with text", () => { //failing
+    it("renders correctly with text", () => {
       const { getByLabelText } = render(<TextFieldNormal label="Test label" value="Test value"/>);
       const component = getByLabelText(/Test label/i);
       expect(component.getAttribute('value')).toBe('Test value')

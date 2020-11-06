@@ -91,7 +91,7 @@ describe("App", () => {
     expect(derivationPath).toBeDisabled();
   })
 
-  it('should update bit length', () => { //failing
+  it('should update bit length', () => {
     render(<Provider store={store}><HDWallet /></Provider>)
     fireEvent.change(screen.getByLabelText(/256 bit/i), { target: { value: "256" } });
     expect(screen.getByLabelText(/256 bit/i).getAttribute('value')).toBe('256')

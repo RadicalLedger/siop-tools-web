@@ -14,7 +14,7 @@ beforeAll(() => {
       expect(component).toBeInTheDocument();
     });
   
-    it("renders correctly with text", () => { //failing
+    it("renders correctly with text", () => {
       const { getByLabelText } = render(<BTCAddress btcAddress="18reqFjpbPPZpjSGqwP57rg9qjCAcnfzyL"/>);
       const component = getByLabelText(/Bitcoin Address/i);
       expect(component.getAttribute('value')).toBe("18reqFjpbPPZpjSGqwP57rg9qjCAcnfzyL");

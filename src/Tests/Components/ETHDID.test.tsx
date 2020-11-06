@@ -14,7 +14,7 @@ beforeAll(() => {
       expect(component).toBeInTheDocument();
     });
   
-    it("renders correctly with text", () => { //failing
+    it("renders correctly with text", () => {
       const { getByLabelText } = render(<ETHDID did="did:ethr:0xd32482CeD4a960fffA1Fee42fF43A20D9930B214"/>);
       const component = getByLabelText(/Decentralized ID/i);
       expect(component.getAttribute('value')).toBe("did:ethr:0xd32482CeD4a960fffA1Fee42fF43A20D9930B214");

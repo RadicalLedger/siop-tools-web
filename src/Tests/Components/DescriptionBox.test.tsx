@@ -14,7 +14,7 @@ beforeAll(() => {
       expect(component).toBeInTheDocument();
     });
   
-    it("renders with text", () => { //failing
+    it("renders with text", () => {
       const { getByText } = render(<DescriptionBox description="Test Description" />);
       const component = getByText(/Test Description/i); 
       expect(component.innerHTML).toBe("Test Description");
