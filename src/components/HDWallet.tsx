@@ -4,7 +4,6 @@ import Alert from '@material-ui/lab/Alert';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 
 import * as bip39 from 'bip39';
-import csprng from 'csprng';
 import * as bip32 from 'bip32';
 import * as bs58check from 'bs58check';
 import { BIP32Interface } from 'bip32';
@@ -78,8 +77,8 @@ export default function HDWallet() {
 
     function handleGenerateSeed(): void {
 
-        const seed = csprng(walletState.nbit, 16)
-        const mnemonic = bip39.entropyToMnemonic(seed)
+        const mnemonic = bip39.generateMnemonic(walletState.nbit)
+        const seed = bip39.mnemonicToSeedSync(mnemonic).toString('hex')
 
         dispatch(setMnemonic(mnemonic))
         createKeysAndUpdate(seed)
@@ -99,6 +98,7 @@ export default function HDWallet() {
         dispatch(setMasterPrivateKey(masterPrivateKey || ''))
         dispatch(setMasterChainCode(masterChainCode))
         dispatch(setMasterPublicKey(masterPublicKey))
+
     }
 
     function handleDerivationPathInput(derPath: string): void {
@@ -136,7 +136,7 @@ export default function HDWallet() {
         let seed: string = ''
         let success: boolean = true
         try {
-            seed = bip39.mnemonicToEntropy(mnemonic)
+            seed = bip39.mnemonicToSeedSync(mnemonic).toString('hex')
             success = true
             createKeysAndUpdate(seed)
         } catch {
@@ -226,7 +226,15 @@ export default function HDWallet() {
             </Grid>
 
             <Grid item xs={12}>
-                <TextFieldNormal label="Random Seed" value={walletState.seed} />
+            <TextField
+                    id="standard-read-only-input"
+                    label="Random Seed"
+                    variant="outlined"
+                    fullWidth
+                    multiline
+                    value={walletState.seed}
+                />
+                {/* <TextFieldNormal label="Random Seed" value={walletState.seed} /> */}
             </Grid>
 
             <Grid item xs={12}>
