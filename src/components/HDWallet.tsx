@@ -131,15 +131,23 @@ export default function HDWallet() {
     }
 
     function handleMnemonicInput(mnemonic: string): void {
-
-        dispatch(setMnemonic(mnemonic))
-        let seed: string = ''
         let success: boolean = true
-        try {
-            seed = bip39.mnemonicToSeedSync(mnemonic).toString('hex')
-            success = true
-            createKeysAndUpdate(seed)
-        } catch {
+        dispatch(setMnemonic(mnemonic))
+        if (bip39.validateMnemonic(mnemonic)) {
+            let seed: string = ''
+            try {
+                seed = bip39.mnemonicToSeedSync(mnemonic).toString('hex')
+                success = true
+                createKeysAndUpdate(seed)
+            } catch {
+                success = false
+                dispatch(setRandomSeed(''))
+                dispatch(setMasterPrivateKey(''))
+                dispatch(setMasterChainCode(''))
+                dispatch(setMasterPublicKey(''))
+            }
+            
+        }else{
             success = false
             dispatch(setRandomSeed(''))
             dispatch(setMasterPrivateKey(''))
@@ -147,6 +155,7 @@ export default function HDWallet() {
             dispatch(setMasterPublicKey(''))
         }
         dispatch(setMnemSuccess(success))
+
     }
 
     function createBitcoinAddress(publicKey: string) {
@@ -226,7 +235,7 @@ export default function HDWallet() {
             </Grid>
 
             <Grid item xs={12}>
-            <TextField
+                <TextField
                     id="standard-read-only-input"
                     label="Random Seed"
                     variant="outlined"
