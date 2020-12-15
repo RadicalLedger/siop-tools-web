@@ -65,8 +65,6 @@ export default function HDWallet() {
     const dispatch = useDispatch()
 
     const handleNumBitSelection = (numBit: string) => {
-
-        console.info('handle selection ran..')
         const val = parseInt(numBit)
         dispatch(setNumBits(val));
         if (walletState.seed !== '') {

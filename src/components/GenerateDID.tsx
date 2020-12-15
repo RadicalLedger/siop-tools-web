@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Grid } from '@material-ui/core';
 import W3 from 'web3'
 import EthrDID from 'ethr-did'
@@ -7,11 +7,18 @@ import TextWithCopy from './TextFieldWithCopy'
 import DescriptionBox from './DescriptionBox'
 import Title from './Title';
 
+import { useTypedSelector } from '../redux/reducers/reducer'
+import { useDispatch } from 'react-redux'
+import {
+    setAddress,
+    setPrivateKey,
+    setDIDGen
+} from '../redux/actions'
+
 export default function GenerateDID() {
 
-    const [address, setAddress] = useState('');
-    const [privateKey, setPrivateKey] = useState('');
-    const [did, setDID] = useState('');
+    const state = useTypedSelector(state => state.didGenerator)
+    const dispatch = useDispatch()
 
     const PROVIDER_NODE = 'https://ropsten.infura.io/chim_himidumage'
     const provider = new W3.providers.HttpProvider(PROVIDER_NODE);
@@ -23,9 +30,9 @@ export default function GenerateDID() {
             let acc = w3.eth.accounts.create();
             const ethrDid = new EthrDID({ address: acc.address, privateKey: acc.privateKey, provider })
 
-            setAddress(acc.address)
-            setPrivateKey(acc.privateKey.replace('0x', ''))
-            setDID(ethrDid.did)
+            dispatch(setAddress(acc.address))
+            dispatch(setPrivateKey(acc.privateKey.replace('0x', '')))
+            dispatch(setDIDGen(ethrDid.did))
         }
         catch (error) {
             console.log("error", error);
@@ -55,15 +62,15 @@ export default function GenerateDID() {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <TextWithCopy label="Address" value={address} />
+                    <TextWithCopy label="Address" value={state.address} />
                 </Grid>
 
                 <Grid item xs={12}>
-                    <TextWithCopy label="Private key" value={privateKey} />
+                    <TextWithCopy label="Private key" value={state.privateKey} />
                 </Grid>
 
                 <Grid item xs={12}>
-                    <TextWithCopy label="Decentralized ID (DID)" value={did} />
+                    <TextWithCopy label="Decentralized ID (DID)" value={state.did} />
                 </Grid>
 
             </Grid>

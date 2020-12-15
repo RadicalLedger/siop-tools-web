@@ -17,6 +17,17 @@ export interface HDWallet {
     did:string
 }
 
+export interface DIDGenerator {
+    address:string,
+    privateKey:string,
+    did:string
+}
+
+export interface DIDResolver {
+    did:string,
+    didDoc:string
+}
+
 export interface View {
     ctyp:string,
     view:number
@@ -24,7 +35,9 @@ export interface View {
 
 interface RootState {
     views: View,
-    hdwallet: HDWallet
+    hdwallet: HDWallet,
+    didGenerator: DIDGenerator
+    didResolver: DIDResolver
 }
 
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Grid, TextField } from '@material-ui/core';
 
 import { Resolver } from 'did-resolver'
@@ -7,9 +7,17 @@ import { getResolver } from 'ethr-did-resolver'
 import DescriptionBox from './DescriptionBox'
 import Title from './Title';
 
+import { useTypedSelector } from '../redux/reducers/reducer'
+import { useDispatch } from 'react-redux'
+import {
+    setDIDRes,
+    setDIDDoc
+} from '../redux/actions'
+
 export default function ResolveDID() {
-    const [did, setDID] = useState('');
-    const [didDoc, setDIDDoc] = useState('');
+
+    const state = useTypedSelector(state => state.didResolver)
+    const dispatch = useDispatch()
 
     const PROVIDER_NODE = 'https://ropsten.infura.io/ethr-did';
 
@@ -32,13 +40,11 @@ export default function ResolveDID() {
 
     function onResolveDID() {
 
-        if (did && did !== '') {
-            didResolve(did).then(doc => {
-                setDIDDoc(JSON.stringify(doc, undefined, 4));
-                console.log(doc)
+        if (state.did && state.did !== '') {
+            didResolve(state.did).then(doc => {
+                dispatch(setDIDDoc(JSON.stringify(doc, undefined, 4)));
             }).catch(err => {
-                setDIDDoc(JSON.stringify(err));
-                console.log(err)
+                dispatch(setDIDDoc(JSON.stringify(err)));
             });
         }
     }
@@ -67,13 +73,13 @@ export default function ResolveDID() {
                         fullWidth
                         inputProps={{ 'aria-label': 'description' }}
                         placeholder="Paste a DID here to resolve its document..."
-                        value={did}
-                        onChange={e => setDID(e.target.value)}
+                        value={state.did}
+                        onChange={e => dispatch(setDIDRes(e.target.value))}
                     />
                 </Grid>
 
                 <Grid item xs={12}>
-                    <Button disabled={did === '' ? true : false}
+                    <Button disabled={state.did === '' ? true : false}
                     data-testid="resolveDID"
                         onClick={onResolveDID} variant="contained"
                         color="primary">Resolve DID</Button>
@@ -85,7 +91,7 @@ export default function ResolveDID() {
                         label="DID-Doc"
                         multiline
                         fullWidth
-                        value={didDoc}
+                        value={state.didDoc}
                         rowsMax={20}
                     />
                 </Grid>

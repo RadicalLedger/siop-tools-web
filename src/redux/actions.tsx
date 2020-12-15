@@ -86,3 +86,28 @@ export const setDIDNDet = (did:string) => ({
     type: 'SET_DID_NDET',
     payload: did
 })
+
+export const setAddress = (address:string) => ({
+    type: 'SET_ADDR',
+    payload: address
+})
+
+export const setPrivateKey = (privateKey:string) => ({
+    type: 'SET_PRIV',
+    payload: privateKey
+})
+
+export const setDIDGen = (did:string) => ({
+    type: 'SET_DID_GEN',
+    payload: did
+})
+
+export const setDIDDoc = (didDoc:string) => ({
+    type: 'SET_DID_DOC',
+    payload: didDoc
+})
+
+export const setDIDRes = (did:string) => ({
+    type: 'SET_DID_RES',
+    payload: did
+})
