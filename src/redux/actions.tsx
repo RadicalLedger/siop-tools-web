@@ -111,3 +111,48 @@ export const setDIDRes = (did:string) => ({
     type: 'SET_DID_RES',
     payload: did
 })
+
+export const setCredentialKeyArray = (array:string[]) => ({
+    type: 'SET_CRED_KEY',
+    payload: array
+})
+
+export const setCredentialValueArray = (array:string[]) => ({
+    type: 'SET_CRED_VAL',
+    payload: array
+})
+
+export const setCreatorPrivateKey = (privateKey:string) => ({
+    type: 'SET_PRIV_KEY',
+    payload: privateKey
+})
+
+export const setCreatorPublicKey = (publicKey:string) => ({
+    type: 'SET_PUB_KEY',
+    payload: publicKey
+})
+
+export const setCreatorVC = (vc:string) => ({
+    type: 'SET_CREATE_VC',
+    payload: vc
+})
+
+export const setInputComponentList = (array:any[]) => ({
+    type: 'SET_INP_COMP',
+    payload: array
+})
+
+export const setVerifierVC = (vc:string) => ({
+    type: 'SET_VERIFY_VC',
+    payload: vc
+})
+
+export const setVerifierPublicKey = (publicKey:string) =>  ({
+    type: 'SET_VERIFY_PUB_KEY',
+    payload: publicKey
+})
+
+export const setVerifierCredentials = (credentials:string) => ({
+    type: 'SET_VERIFY_CRED',
+    payload: credentials
+})

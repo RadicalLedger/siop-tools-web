@@ -33,11 +33,28 @@ export interface View {
     view:number
 }
 
+export interface CredentialCreator {
+    keyArray:[string],
+    valueArray:[string],
+    privateKey:string,
+    publicKey:string,
+    credential:string,
+    inputComponentList:[any]
+}
+
+export interface CredentialVerifier {
+    vc:string,
+    publicKey:string,
+    credential:string
+}
+
 interface RootState {
     views: View,
     hdwallet: HDWallet,
-    didGenerator: DIDGenerator
-    didResolver: DIDResolver
+    didGenerator: DIDGenerator,
+    didResolver: DIDResolver,
+    credentialCreator: CredentialCreator,
+    credentialVerifier: CredentialVerifier
 }
 
 

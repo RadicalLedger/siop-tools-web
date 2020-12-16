@@ -50,6 +50,14 @@ export default function DrawerItems() {
           <ListItemText primary="Generate Bitcoin Addresses" />
         </ListItem>
 
+        <ListItem className={view === 4  ? classes.selected : classes.unselected} button key="Cred-Creator" onClick={() => { dispatch(setView({ ctyp: '', view: 4 })) }}>
+          <ListItemText primary="Create Credentials" />
+        </ListItem>
+
+        <ListItem className={view === 5 ? classes.selected : classes.unselected} button key="Cred-Verifier" onClick={() => { dispatch(setView({ ctyp: '', view: 5 })) }}>
+          <ListItemText primary="Verify Credentials" />
+        </ListItem>
+
       </List>
     </div>
   )

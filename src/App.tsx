@@ -12,6 +12,8 @@ import Home from './components/Home'
 import GenerateDID from './components/GenerateDID'
 import ResolveDID from './components/ResolveDID'
 import HDWallet from './components/HDWallet'
+import CredentialCreator from './components/CredentialCreator'
+import CredentialVerifier from './components/CredentialVerifier'
 import DrawerItems from './components/DrawerItems'
 import Hidden from '@material-ui/core/Hidden';
 
@@ -97,6 +99,12 @@ function App() {
       break;
     case (3):
       currentView = <HDWallet />
+      break
+      case (4):
+        currentView = <CredentialCreator />
+        break
+      case (5):
+      currentView = <CredentialVerifier />
       break
     default:
       currentView = <GenerateDID />
