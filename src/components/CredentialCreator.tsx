@@ -63,9 +63,8 @@ export default function CredentialCreator() {
         const newInputComponentList = [...state.inputComponentList]
         state.keyArray.push('')
         state.valueArray.push('')
-        newInputComponentList.push(<InputComponent key={i} index ={i}/>)
+        newInputComponentList.push(<InputComponent key={i} index={i} />)
         dispatch(setInputComponentList(newInputComponentList))
-
     }
 
     async function createKeyPair() {
@@ -136,11 +135,11 @@ export default function CredentialCreator() {
                     return component
                 })}
             </List>
-            <IconButton aria-label="add" onClick={addNewInput} 
-            disabled={state.keyArray[state.keyArray.length - 1] === '' || state.valueArray[state.valueArray.length - 1] === ''}
+            <IconButton aria-label="add" onClick={addNewInput}
+                disabled={state.keyArray[state.inputComponentList.length - 1] === '' || state.valueArray[state.inputComponentList.length - 1] === ''}
             >
                 <AddIcon />
-            </IconButton> 
+            </IconButton>
 
             <TextField
                 className={classes.elements}
