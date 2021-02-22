@@ -5182,7 +5182,7 @@ detect-port-alt@1.1.6:
     address "^1.0.1"
     debug "^2.6.0"
 
-"did-hd-wallet@file:../../Assignments/did-hd-wallet":
+"did-hd-wallet@file:src/local_libs/did-hd-wallet":
   version "1.0.0"
   dependencies:
     bip32 "^2.0.6"
@@ -12017,7 +12017,7 @@ scrypt-js@^3.0.0, scrypt-js@^3.0.1:
   resolved "https://registry.yarnpkg.com/scrypt-js/-/scrypt-js-3.0.1.tgz#d314a57c2aef69d1ad98a138a21fe9eafa9ee312"
   integrity sha512-cdwTTnqPu0Hyvf5in5asVdZocVDTNRmR7XEcJuIzMjJeSHybHl7vpB66AzwTaIg6CLSbtjcxc8fqcySfnTkccA==
 
-"sd-vc-lib@file:../../Assignments/sdvc-lib":
+"sd-vc-lib@file:src/local_libs/sdvc-lib":
   version "1.0.0"
   dependencies:
     "@types/secp256k1" "^4.0.1"
