@@ -2,19 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import { store } from './app/store';
+import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
-
-import { Provider } from 'react-redux'
-import { store } from './redux/store'
 
 document.title = 'SIOP-DID Tools'
 ReactDOM.render(
-  <Provider store={store}>
-    <React.StrictMode>
+  <React.StrictMode>
+    <Provider store={store}>
       <App />
-    </React.StrictMode>
-  </Provider>
-  ,
+    </Provider>
+  </React.StrictMode>,
   document.getElementById('root')
 );
 

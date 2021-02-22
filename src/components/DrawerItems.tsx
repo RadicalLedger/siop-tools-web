@@ -1,10 +1,9 @@
 import React from 'react';
 import { Toolbar, Divider, List, ListItem, ListItemText, makeStyles, createStyles, Theme } from '@material-ui/core';
 
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
-import { setView } from '../redux/actions'
-import { useTypedSelector } from '../redux/reducers/reducer';
+import { setView, _view } from '../redux/appSlice'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,41 +20,34 @@ export default function DrawerItems() {
 
   const dispatch = useDispatch()
   const classes = useStyles()
-  const view = useTypedSelector((state) => state.views.view)
-  const ctyp = useTypedSelector(state => state.views.ctyp)
+  const view = useSelector(_view)
+  // const ctyp = useTypedSelector(state => state.views.ctyp)
 
   return (
     <div>
       <Toolbar />
       <Divider />
       <List>
-
-      <ListItem className={view === 0 ? classes.selected : classes.unselected} button key="Home" onClick={() => dispatch(setView({ ctyp: '', view: 0 }))}>
+        <ListItem className={view === 0 ? classes.selected : classes.unselected} button key="home" onClick={() => { dispatch(setView(0)) }}>
           <ListItemText primary="Home" />
         </ListItem>
-
-        <ListItem className={view === 1 ? classes.selected : classes.unselected} button key="DID-generate" onClick={() => dispatch(setView({ ctyp: '', view: 1 }))}>
-          <ListItemText primary="Generate DID" />
+        <ListItem className={view === 1 ? classes.selected : classes.unselected} button key="create-normal-did" onClick={() => { dispatch(setView(1)) }}>
+          <ListItemText primary="Create Normal DID" />
         </ListItem>
-
-        <ListItem className={view === 2 ? classes.selected : classes.unselected} button key="DID-resolve" onClick={() => dispatch(setView({ ctyp: '', view: 2 }))}>
+        <ListItem className={view === 2 ? classes.selected : classes.unselected} button key="create-hd-did" onClick={() => { dispatch(setView(2)) }}>
+          <ListItemText primary="Create HD DID" />
+        </ListItem>
+        <ListItem className={view === 3 ? classes.selected : classes.unselected} button key="resolve-did" onClick={() => { dispatch(setView(3)) }}>
           <ListItemText primary="Resolve DID" />
         </ListItem>
-
-        <ListItem className={view === 3 && ctyp === 'ETH' ? classes.selected : classes.unselected} button key="ETH" onClick={() => { dispatch(setView({ ctyp: 'ETH', view: 3 })) }}>
-          <ListItemText primary="Generate Ethereum Addresses" />
+        <ListItem className={view === 4 ? classes.selected : classes.unselected} button key="sd-cred-creator" onClick={() => { dispatch(setView(4)) }}>
+          <ListItemText primary="Create Selectively Disclosable Credentials" />
         </ListItem>
-
-        <ListItem className={view === 3 && ctyp === 'BTC' ? classes.selected : classes.unselected} button key="BTC" onClick={() => { dispatch(setView({ ctyp: 'BTC', view: 3 })) }}>
-          <ListItemText primary="Generate Bitcoin Addresses" />
+        <ListItem className={view === 5 ? classes.selected : classes.unselected} button key="sd-cred-presenter" onClick={() => { dispatch(setView(5)) }}>
+          <ListItemText primary="Mask and present credentials" />
         </ListItem>
-
-        <ListItem className={view === 4  ? classes.selected : classes.unselected} button key="Cred-Creator" onClick={() => { dispatch(setView({ ctyp: '', view: 4 })) }}>
-          <ListItemText primary="Create Credentials" />
-        </ListItem>
-
-        <ListItem className={view === 5 ? classes.selected : classes.unselected} button key="Cred-Verifier" onClick={() => { dispatch(setView({ ctyp: '', view: 5 })) }}>
-          <ListItemText primary="Verify Credentials" />
+        <ListItem className={view === 6 ? classes.selected : classes.unselected} button key="sd-cred-verifier" onClick={() => { dispatch(setView(6)) }}>
+          <ListItemText primary="Verify Presentation" />
         </ListItem>
 
       </List>

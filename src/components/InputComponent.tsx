@@ -2,13 +2,8 @@ import { IconButton, makeStyles, TextField } from '@material-ui/core';
 import MinimizeIcon from '@material-ui/icons/Minimize';
 import React from 'react'
 
-import { useTypedSelector } from '../redux/reducers/reducer'
-import { useDispatch } from 'react-redux'
-import {
-    setCredentialKeyArray,
-    setCredentialValueArray,
-    setInputComponentList
-} from '../redux/actions'
+import { useDispatch, useSelector } from 'react-redux'
+import { setKeyArray, setValueArray, setInputComponentList, _inputComponentList, _keyArray, _valueArray } from '../redux/issueSlice';
 
 const useStyles = makeStyles({
     elements: {
@@ -25,34 +20,41 @@ const useStyles = makeStyles({
 
 export default function InputComponent(props: { index: number }) {
 
-    const state = useTypedSelector(state => state.credentialCreator)
+    const keyArray = useSelector(_keyArray)
+    const valueArray = useSelector(_valueArray)
+    const inputComponentList = useSelector(_inputComponentList)
     const dispatch = useDispatch()
 
     const classes = useStyles();
 
     const handleKeyInput = (key: string, index: number) => {
-        const newKeyArray = [...state.keyArray]
+        const newKeyArray = [...keyArray]
         newKeyArray[index] = key
-        dispatch(setCredentialKeyArray(newKeyArray))
+        dispatch(setKeyArray(newKeyArray))
+
+
     }
 
     const handleValueInput = (value: string, index: number) => {
         console.log(value, index)
-        const newValueArray = [...state.valueArray]
+        const newValueArray = [...valueArray]
         newValueArray[index] = value
-        dispatch(setCredentialValueArray(newValueArray))
+        dispatch(setValueArray(newValueArray))
+
     }
 
     const removeInput = (index: number) => {
-        const newInputComponentList = [...state.inputComponentList]
-        const newKeyArray = [...state.keyArray]
-        const newValueArray = [...state.valueArray]
+        const newInputComponentList = [...inputComponentList]
+        const newKeyArray = [...keyArray]
+        const newValueArray = [...valueArray]
         newInputComponentList.pop()
         newKeyArray.splice(index, 1)
         newValueArray.splice(index, 1);
         dispatch(setInputComponentList(newInputComponentList))
-        dispatch(setCredentialKeyArray(newKeyArray))
-        dispatch(setCredentialValueArray(newValueArray))
+        dispatch(setKeyArray(newKeyArray))
+        dispatch(setValueArray(newValueArray))
+
+
     }
 
     return (<div className={classes.secondaryWrapper} key={props.index}>
@@ -60,7 +62,7 @@ export default function InputComponent(props: { index: number }) {
             key={`key ${props.index}`}
             className={classes.elements}
             //@ts-ignore
-            value={state.keyArray[props.index]}
+            value={keyArray[props.index]}
             onChange={e => handleKeyInput(e.target.value, props.index)}
             placeholder="Key"
             variant="outlined"
@@ -69,7 +71,7 @@ export default function InputComponent(props: { index: number }) {
             key={`value ${props.index}`}
             className={classes.elements}
             //@ts-ignore
-            value={state.valueArray[props.index]}
+            value={valueArray[props.index]}
             onChange={e => handleValueInput(e.target.value, props.index)}
             placeholder="Value"
             variant="outlined"
@@ -79,7 +81,7 @@ export default function InputComponent(props: { index: number }) {
             className={classes.elements}
             aria-label="remove"
             onClick={() => removeInput(props.index)}
-            disabled={state.inputComponentList.length < 2}
+            disabled={inputComponentList.length < 2}
         >
             <MinimizeIcon />
         </IconButton>

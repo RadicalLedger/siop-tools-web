@@ -7,18 +7,20 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Drawer from '@material-ui/core/Drawer';
 import MenuIcon from '@material-ui/icons/Menu';
+import Hidden from '@material-ui/core/Hidden';
+import IconButton from '@material-ui/core/IconButton';
 
 import Home from './components/Home'
-import GenerateDID from './components/GenerateDID'
-import ResolveDID from './components/ResolveDID'
-import HDWallet from './components/HDWallet'
-import CredentialCreator from './components/CredentialCreator'
-import CredentialVerifier from './components/CredentialVerifier'
 import DrawerItems from './components/DrawerItems'
-import Hidden from '@material-ui/core/Hidden';
+import NormalDID from './components/NormalDID'
+import HDDID from './components/HDDID'
+import SDCredentialCreator from './components/SDCredentialCreator'
+import SDCredentialMasker from './components/SDCredentialMasker'
+import SDCredentialVerifier from './components/SDCredentialVerifier'
 
-import { useTypedSelector } from './redux/reducers/reducer'
-import IconButton from '@material-ui/core/IconButton';
+import { _view } from './redux/appSlice'
+import { useSelector } from 'react-redux';
+import ResolveDID from './components/ResolveDID';
 
 const drawerWidth = 200
 
@@ -75,39 +77,42 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 function App() {
 
-  const view = useTypedSelector((state) => state.views)
+  const view = useSelector(_view)
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const classes = useStyles();
 
   const handleDrawerToggle = () => {
 
     setMobileOpen(!mobileOpen);
-    
+
   };
 
   let currentView = (<div></div>)
 
-  switch (view.view) {
+  switch (view) {
     case (0):
       currentView = <Home />
-      break;
-    case (1):
-      currentView = <GenerateDID />
-      break;
-    case (2):
-      currentView = <ResolveDID />
-      break;
-    case (3):
-      currentView = <HDWallet />
       break
-      case (4):
-        currentView = <CredentialCreator />
-        break
-      case (5):
-      currentView = <CredentialVerifier />
+    case (1):
+      currentView = <NormalDID />
+      break
+    case (2):
+      currentView = <HDDID />
+      break
+    case (3):
+      currentView = <ResolveDID />
+      break
+    case (4):
+      currentView = <SDCredentialCreator />
+      break
+    case (5):
+      currentView = <SDCredentialMasker />
+      break
+    case (6):
+      currentView = <SDCredentialVerifier />
       break
     default:
-      currentView = <GenerateDID />
+      currentView = <Home />
   }
 
   return (
@@ -115,22 +120,22 @@ function App() {
       <div className={classes.root}>
         <AppBar position="fixed" className={classes.appBar}>
           <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            className={classes.menuButton}
-          >
-            <MenuIcon />
-          </IconButton>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              className={classes.menuButton}
+            >
+              <MenuIcon />
+            </IconButton>
             <Typography variant="h6" style={{ marginRight: 10 }} >
               SIOP-DID Tools
         </Typography>
           </Toolbar>
         </AppBar>
         <Hidden smUp implementation="css">
-        <Drawer
+          <Drawer
             variant="temporary"
             anchor={theme.direction === 'rtl' ? 'right' : 'left'}
             open={mobileOpen}
