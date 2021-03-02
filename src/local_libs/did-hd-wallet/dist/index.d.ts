@@ -17,13 +17,7 @@ export default class Wallet {
     private masterNode;
     private mnemonic;
     constructor(type: Types, value: string);
-    getMasterKeys(): {
-        privateKey: string | undefined;
-        publicKey: string;
-        chainCode: string;
-        ethAddress: string;
-        did: string;
-    };
+    getMasterKeys(): Keys;
     getMasterPrivateKey(): string | undefined;
     getMasterPublicKey(): string;
     getMasterChainCode(): string;
@@ -32,8 +26,6 @@ export default class Wallet {
     getBase58(): string;
     getWIF(): string;
 }
-export declare function generateMnemonic(strength: number): string;
-export declare function validateMnemonic(mnemonic: string): boolean;
 export declare function getSeedFromMnemonic(mnemonic: string): string;
 export declare function publicKeyToETH(publicKey: string): string;
 export declare function getDID(address: string): string;
@@ -45,3 +37,4 @@ export declare function createETHDIDFromPrivateKey(privateKey: string): {
     privateKey: string;
     did: string;
 };
+export { generateMnemonic, validateMnemonic } from 'bip39';

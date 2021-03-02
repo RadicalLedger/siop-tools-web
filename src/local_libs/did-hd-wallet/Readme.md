@@ -24,6 +24,21 @@ generate random mnemonic.
 
 1. mnemonic: string - mnemonic words range from 12 to 24.
 
+### validateMnemonic
+
+import { validateMnemonic } from 'did-hd-wallet';
+
+validate mnemonic string.
+
+#### Parameters
+
+1. mnemonic : string - Mnemonic string.
+
+#### Returns
+
+1. validity: boolean - whether mnemonic string is valid or not.
+
+
 ### getSeedFromMnemonic
 
 import { getSeedFromMnemonic } from 'did-hd-wallet';
@@ -38,19 +53,20 @@ get seed from mnemonic words.
 
 1. seed: string - hex encoded seed.
 
-### getEthAddress
+### publicKeyToETH
 
-import { getEthAddress } from 'did-hd-wallet';
+import { publicKeyToETH } from 'did-hd-wallet';
 
 get ethereum address of a public key.
 
 #### Parameters
 
-1. publicKey : string - public key of which the address is needed.
+1. publicKey : string - public key.
 
 #### Returns
 
-1. address: string - Ethereum address.
+1. ethereumAddress: string - Ethereum address corresponding to the public key.
+
 
 ### getDID
 
@@ -65,6 +81,34 @@ get ethereum decentralized id of an Ethereum address.
 #### Returns
 
 1. DID: string - Ethereum DID.
+
+### createRandomETHDID
+
+import { createRandomETHDID } from 'did-hd-wallet';
+
+generate random Ethereum address.
+
+#### Parameters
+
+none
+
+#### Returns
+
+1. ethereumAddress: string - random Ethereum address.
+
+### createETHDIDFromPrivateKey
+
+import { createETHDIDFromPrivateKey } from 'did-hd-wallet';
+
+get ethereum address from a private key.
+
+#### Parameters
+
+1. privateKey : string - valid private key.
+
+#### Returns
+
+1. ethereumAddress: string - Ethereum address corresponding to the private key.
 
 ### Wallet Class
 
@@ -120,4 +164,14 @@ None
 
 ##### Returns
 
-1. childKeys: object - JS object containing child private key, child public key and child chain code.
+1. childKeys: object - JS object containing child private key, child public key, child chain code, base58 representation of child node, WIF representation of child node, Ethereum address and ETH DID .
+
+##### getMasterKeys
+
+##### Parameters
+
+None
+
+##### Returns
+
+1. childKeys: object - JS object containing master private key, master public key, master chain code, base58 representation of master node, WIF representation of master node, Ethereum master Ethereum address and master ETH DID..
