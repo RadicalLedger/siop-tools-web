@@ -21,6 +21,9 @@ import SDCredentialVerifier from './components/SDCredentialVerifier'
 import { _view } from './redux/appSlice'
 import { useSelector } from 'react-redux';
 import ResolveDID from './components/ResolveDID';
+import OCDIDResolver from './components/OffChainDIDResolver';
+import OCDIDUpdater from './components/OffchainDIDUpdater';
+import OCDIDRevoker from './components/OffchainDIDRevoker';
 
 const drawerWidth = 200
 
@@ -111,6 +114,15 @@ function App() {
     case (6):
       currentView = <SDCredentialVerifier />
       break
+    case (7):
+      currentView = <OCDIDResolver />
+      break
+    case (8):
+      currentView = <OCDIDUpdater />
+      break
+    case (9):
+      currentView = <OCDIDRevoker />
+      break
     default:
       currentView = <Home />
   }
@@ -131,7 +143,7 @@ function App() {
             </IconButton>
             <Typography variant="h6" style={{ marginRight: 10 }} >
               SIOP-DID Tools
-        </Typography>
+            </Typography>
           </Toolbar>
         </AppBar>
         <Hidden smUp implementation="css">

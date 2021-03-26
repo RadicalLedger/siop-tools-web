@@ -22,6 +22,7 @@ export default function DrawerItems() {
   const classes = useStyles()
   const view = useSelector(_view)
   // const ctyp = useTypedSelector(state => state.views.ctyp)
+  console.log(process.env.REACT_APP_BACKEND)
 
   return (
     <div>
@@ -49,7 +50,15 @@ export default function DrawerItems() {
         <ListItem className={view === 6 ? classes.selected : classes.unselected} button key="sd-cred-verifier" onClick={() => { dispatch(setView(6)) }}>
           <ListItemText primary="Verify Presentation" />
         </ListItem>
-
+        <ListItem className={view === 7 ? classes.selected : classes.unselected} button key="off-chain-did-resolve" onClick={() => { dispatch(setView(7)) }}>
+          <ListItemText primary="Resolve offchain DID" />
+        </ListItem>
+        <ListItem className={view === 8 ? classes.selected : classes.unselected} button key="off-chain-did-update" onClick={() => { dispatch(setView(8)) }}>
+          <ListItemText primary="Update offchain DID" />
+        </ListItem>
+        <ListItem className={view === 9 ? classes.selected : classes.unselected} button key="off-chain-did-revoke" onClick={() => { dispatch(setView(9)) }}>
+          <ListItemText primary="Revoke off chain DID" />
+        </ListItem>
       </List>
     </div>
   )
