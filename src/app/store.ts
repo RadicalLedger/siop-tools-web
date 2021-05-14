@@ -6,6 +6,9 @@ import verifyReducer from '../redux/verifySlice'
 import normalDidReducer from '../redux/normalDIDSlice'
 import hdDidReducer from '../redux/hdDIDSlice'
 import resolveDidReducer from '../redux/resolveDIDSlice'
+import offResolver from '../redux/offResolverSlice'
+import offUpdater from '../redux/offUpdaterSlice'
+import offRevoker from '../redux/offRevokerSlice'
 
 export const store = configureStore({
   reducer: {
@@ -15,7 +18,10 @@ export const store = configureStore({
     verify: verifyReducer,
     normalDID:normalDidReducer,
     hdDid:hdDidReducer,
-    resolveDID: resolveDidReducer
+    resolveDID: resolveDidReducer,
+    offResolve: offResolver,
+    offUpdater: offUpdater,
+    offRevoker: offRevoker
   },
 });
 
