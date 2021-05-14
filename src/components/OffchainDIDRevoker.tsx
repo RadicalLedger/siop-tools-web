@@ -5,9 +5,11 @@ import { Grid, TextField, Button, FormControl, RadioGroup, FormControlLabel, Rad
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 
+import { useDispatch, useSelector } from 'react-redux'
+import { _privateKey, setPrivateKey, setDID, setDIDDocument, _did, _didDoc } from '../redux/offRevokerSlice';
+
 import Title from './Title'
-
-
+import Spinner from './Spinner'
 
 import { isAddress } from '../utils';
 import axios from 'axios';
@@ -33,16 +35,21 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function OCDIDRevoker() {
 
     
-    const [did, setDid] = useState('')
-    const [privateKey, setPrivateKey] = useState('')
-    const [didDoc, setDidDoc] = useState('')
+    const did = useSelector(_did)
+    const privateKey = useSelector(_privateKey)
+    const didDoc = useSelector(_didDoc)
     const [isValidDID, setIsValidDID] = useState(true)
     const [isRevoked, setIsRevoked] = useState(false)
+    const [isRevoking, setIsRevoking] = useState(false)
+
     const classes = useStyles();
+
+    const dispatch = useDispatch()
 
 
     function handleRevokeDID(): void {
          if(isAddress(did.split(':')[2])){
+            setIsRevoking(true)
             setIsValidDID(true)
             axios.patch(`${process.env.REACT_APP_BACKEND}/did/${did}`).then(res => {
                 const { challenge } = jwt.decode(res.data.challengeToken) as any
@@ -57,15 +64,18 @@ export default function OCDIDRevoker() {
                     }
                   }).then(res => {
                     console.log(res.data)
-                    setDidDoc(JSON.stringify(res.data.newResolution.didDocument))
+                    dispatch(setDIDDocument(JSON.stringify(res.data.newResolution.didDocument)))
                     setIsRevoked(true)
+                    setIsRevoking(false)
                   }).catch(err => {
-                    setDidDoc(err.message)
+                    dispatch(setDIDDocument(err.message))
                     setIsRevoked(false)
+                    setIsRevoking(false)
                   })
               }).catch(err => {
-                setDidDoc(err.message)
+                dispatch(setDIDDocument(err.message))
                 setIsRevoked(false)
+                setIsRevoking(false)
               })
          }else{
             setIsValidDID(false)
@@ -75,11 +85,11 @@ export default function OCDIDRevoker() {
 
 
     function handlePrivateKeyInput(privateKey: string): void {
-        setPrivateKey(privateKey)
+        dispatch(setPrivateKey(privateKey))
     }
 
     function handleDidInput(did: string): void {
-        setDid(did)
+        dispatch(setDID(did))
     }
 
     return (
@@ -140,6 +150,7 @@ export default function OCDIDRevoker() {
                     }}
                 />
             </Grid>
+            {isRevoking && <Spinner />}
         </Grid>
     )
 }

@@ -4,8 +4,12 @@ import { Grid, TextField, Button } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { ecdsaSign, publicKeyCreate } from 'secp256k1'
-import Title from './Title'
 
+import Title from './Title'
+import Spinner from './Spinner'
+
+import { useDispatch, useSelector } from 'react-redux'
+import { _did, _didDoc, _privateKey, _publicKey, setDIDDocument, setDID, setPrivateKey, setPublicKey } from '../redux/offUpdaterSlice';
 
 import axios from 'axios';
 import { isAddress } from '../utils';
@@ -30,16 +34,20 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 export default function OCDIDUpdater() {
 
-    const [did, setDid] = useState('')
-    const [privateKey, setPrivateKey] = useState('')
-    const [publicKey, setPublicKey] = useState('')
-    const [didDoc, setDidDoc] = useState('')
+    const did = useSelector(_did)
+    const privateKey = useSelector(_privateKey)
+    const publicKey = useSelector(_publicKey)
+    const didDoc = useSelector(_didDoc)
     const [isValidDID, setIsValidDID] = useState(true)
     const [isUpdated, setIsUpdated] = useState(false)
+    const [isUpdating, setIsUpdating] = useState(false)
+
+    const dispatch = useDispatch()
 
     const classes = useStyles();
 
     function handleUpdateDID() {
+        setIsUpdating(true)
         if(isAddress(did.split(':')[2])){
             setIsValidDID(true)
             axios.put(`${process.env.REACT_APP_BACKEND}/did/${did}`).then((res: any) => {
@@ -58,37 +66,39 @@ export default function OCDIDUpdater() {
                             "publicKey": publicKey
                         }
                     }).then(res => {
+                        setIsUpdating(false)
                         console.log(res.data.newResolution.didDocument)
-                        setDidDoc(JSON.stringify(res.data.newResolution.didDocument))
+                        dispatch(setDIDDocument(JSON.stringify(res.data.newResolution.didDocument)))
                         setIsUpdated(true)
                     }).catch(err => {
+                        setIsUpdating(false)
                         setIsUpdated(false)
-                        setDidDoc(err.message)
+                        dispatch(setDIDDocument(err.message))
                     })
             }).catch(err => {
+                setIsUpdating(false)
                 setIsUpdated(false)
-                setDidDoc(err.message)
+                dispatch(setDIDDocument(err.message))
             })
         }else{
             setIsValidDID(false)
-            setDidDoc('')
+            dispatch(setDIDDocument(''))
         }
-        
     }
 
 
     function handleDidInput(did: string): void {
-        setDid(did)
+        dispatch(setDID(did))
 
     }
 
     function handlePrivateKeyInput(privateKey: string): void {
-        setPrivateKey(privateKey)
+        dispatch(setPrivateKey(privateKey))
 
     }
 
     function handlePublicKeyInput(publicKey: string): void {
-        setPublicKey(publicKey)
+        dispatch(setPublicKey(publicKey))
 
     }
 
@@ -162,6 +172,7 @@ export default function OCDIDUpdater() {
                     }}
                 />
             </Grid>
+            {isUpdating && <Spinner />}
         </Grid>
     )
 }

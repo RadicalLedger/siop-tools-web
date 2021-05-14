@@ -5,6 +5,9 @@ import Title from './Title'
 import axios from 'axios';
 import { isAddress } from '../utils';
 
+import { useDispatch, useSelector } from 'react-redux'
+import { setDID, setDIDDocument, _did, _didDoc } from '../redux/offResolverSlice'
+
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
@@ -25,20 +28,21 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 export default function OCDIDResolver() {
 
-    const [did, setDid] = useState('')
-    const [didDoc, setDDidDoc] = useState('')
+    const did = useSelector(_did)
+    const didDoc = useSelector(_didDoc)
     const [isValidDID, setIsValidDID] = useState(true)
     const classes = useStyles();
 
+    const dispatch = useDispatch()
 
     function getDID(){
         if(isAddress(did.split(':')[2])){
             setIsValidDID(true)
             axios.get(`${process.env.REACT_APP_BACKEND}/did/${did}`).then((res:any) => {
                 console.log(res.data)
-                setDDidDoc(JSON.stringify(res.data.didDocument))
+                dispatch(setDIDDocument(JSON.stringify(res.data.didDocument)))
               }).catch(err => {
-                setDDidDoc('Error')
+                dispatch(setDIDDocument('Error'))
               })
         }else{
             setIsValidDID(false)
@@ -47,7 +51,7 @@ export default function OCDIDResolver() {
       }
 
     function handleDidInput(did: string): void {
-        setDid(did)
+        dispatch(setDID(did))
     }
 
     return (
