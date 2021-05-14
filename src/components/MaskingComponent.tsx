@@ -9,7 +9,6 @@ import Masker from './Masker';
 
 const useStyles = makeStyles({
     elements: {
-        marginTop: 50,
         marginLeft: 3,
         marginRight: 3
     },

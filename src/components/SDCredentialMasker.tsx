@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, Fade, IconButton, List, Snackbar, TextField } from '@material-ui/core'
+import { Button, Fade, Grid, IconButton, List, Snackbar, TextField } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Title from './Title';
@@ -10,23 +10,9 @@ import { present, base64UrlDecode } from 'sd-vc-lib';
 import MaskingComponent from './MaskingComponent';
 //@ts-ignore
 import JSONFormat from 'json-format'
-import {setCredentials, setHolderPrivateKey, setInputComponentList, setMasks, setVP, _credentials, _holderPrivateKey, _inputComponentList, _masks, _vp} from '../redux/presentSlice'
-import {base64UrlEncode} from 'sd-vc-lib'
-const useStyles = makeStyles({
-    elements: {
-        marginTop: 50,
-        marginLeft: 3,
-        marginRight: 3
-    },
-    mainWrapper: {
-        display: 'flex',
-        flexDirection: 'column',
-        paddingTop: '4%',
-        paddingRight: '3%',
-        paddingBottom: 0,
-        paddingLeft: '3%'
-    }
-});
+import { setCredentials, setHolderPrivateKey, setInputComponentList, setMasks, setVP, _credentials, _holderPrivateKey, _inputComponentList, _masks, _vp } from '../redux/presentSlice'
+import { base64UrlEncode } from 'sd-vc-lib'
+
 
 export default function SDCredentialMasker() {
 
@@ -35,10 +21,9 @@ export default function SDCredentialMasker() {
     const credentials = useSelector(_credentials)
     const masks = useSelector(_masks)
     const holderPrivateKey = useSelector(_holderPrivateKey)
-    
+
     const dispatch = useDispatch()
 
-    const classes = useStyles();
 
     const [snackBarState, setState] = React.useState<{
         open: boolean;
@@ -51,13 +36,13 @@ export default function SDCredentialMasker() {
     }
 
     async function mask() {
-        const cred = credentials.map((cred:any) => {
+        const cred = credentials.map((cred: any) => {
             return JSON.parse(base64UrlDecode(cred))
         })
-        try{
+        try {
             const vp = present(cred, masks, holderPrivateKey)
             dispatch(setVP(base64UrlEncode(JSON.stringify(vp))))
-        }catch(e){
+        } catch (e) {
             dispatch(setVP(e.message))
         }
     }
@@ -92,43 +77,62 @@ export default function SDCredentialMasker() {
     }
 
     return (
-        <div className={classes.mainWrapper}>
-            <Title>
-                Mask and present credentials
-            </Title>
-            <List>
-                {inputComponentList.map((i:number) => {
-                    return <MaskingComponent index={i} />
-                })}
-            </List>
-            <IconButton aria-label="add" onClick={addNewInput}
-                disabled={credentials[inputComponentList.length - 1] === '' }
-            >
-                <AddIcon />
-            </IconButton>
-            <TextField
-                className={classes.elements}
-                value={holderPrivateKey}
-                onChange={e => handlePrivateKeyInput(e.target.value)}
-                label="Holder's Private Key"
-                variant="outlined"
-                multiline
-            />
-            <Button
-                className={classes.elements}
-                color="primary" variant="contained"
-                onClick={mask}
-                disabled={holderPrivateKey && masks && credentials ? false : true}
-            >Mask</Button>
-            <TextField
-                className={classes.elements}
-                // value={JSONFormat(vp, {type:'tab'})}
-                value={JSONFormat(vp, {type:'tab'})}
-                label="Presentation"
-                variant="outlined"
-                multiline
-                onClick={() => copyToClipboard(vp)}
-            />
+        <div>
+            <Grid container spacing={3}>
+                <Grid item xs={12}>
+                    <Title>
+                        Mask and present credentials
+                    </Title>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <List>
+                        {inputComponentList.map((i: number) => {
+                            return <MaskingComponent index={i} />
+                        })}
+                    </List>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <IconButton aria-label="add" onClick={addNewInput}
+                        disabled={credentials[inputComponentList.length - 1] === ''}
+                    >
+                        <AddIcon />
+                    </IconButton>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <TextField
+                        value={holderPrivateKey}
+                        onChange={e => handlePrivateKeyInput(e.target.value)}
+                        label="Holder's Private Key"
+                        variant="outlined"
+                        multiline
+                        fullWidth
+                    />
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Button
+                        color="primary" variant="contained"
+                        onClick={mask}
+                        disabled={holderPrivateKey && masks && credentials ? false : true}
+                    >Mask</Button>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <TextField
+                        // value={JSONFormat(vp, {type:'tab'})}
+                        value={JSONFormat(vp, { type: 'tab' })}
+                        label="Presentation"
+                        variant="outlined"
+                        multiline
+                        fullWidth
+                        onClick={() => copyToClipboard(vp)}
+                    />
+                </Grid>
+            </Grid>
+
             <Snackbar
                 open={snackBarState.open}
                 onClose={handleClose}

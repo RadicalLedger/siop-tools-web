@@ -7,7 +7,6 @@ import { setKeyArray, setValueArray, setInputComponentList, _inputComponentList,
 
 const useStyles = makeStyles({
     elements: {
-        marginTop: 50,
         marginLeft: 3,
         marginRight: 3
     },
