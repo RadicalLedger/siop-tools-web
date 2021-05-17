@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Grid } from '@material-ui/core';
+import { Button, Fade, Grid, Snackbar } from '@material-ui/core';
 
 import TextWithCopy from './TextFieldWithCopy'
 import DescriptionBox from './DescriptionBox'
@@ -17,6 +17,8 @@ export default function NormalDID() {
     const privateKey = useSelector(_privateKey)
     const dispatch = useDispatch()
 
+    const [snackBarState, setState] = React.useState<{open: boolean, text:string}>({open: false,text:''});
+
     function generateDID() {
 
         try {
@@ -28,6 +30,27 @@ export default function NormalDID() {
         }
         catch (error) {
             console.log("error", error);
+        }
+    }
+
+    function handleClose() {
+        setState({
+            ...snackBarState,
+            open: false,
+        });
+    };
+
+    function callback(success:boolean){
+        if(success){
+            setState({
+                open: true,
+                text:"Copied to clipboard"
+            });
+        }else{
+            setState({
+                open: true,
+                text:"Clould not copied"
+            });
         }
     }
 
@@ -54,18 +77,26 @@ export default function NormalDID() {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <TextWithCopy label="Address" value={address} />
+                    <TextWithCopy label="Address" value={address} callback={callback}/>
                 </Grid>
 
                 <Grid item xs={12}>
-                    <TextWithCopy label="Private key" value={privateKey} />
+                    <TextWithCopy label="Private key" value={privateKey} callback={callback}/>
                 </Grid>
 
                 <Grid item xs={12}>
-                    <TextWithCopy label="Decentralized ID (DID)" value={did} />
+                    <TextWithCopy label="Decentralized ID (DID)" value={did} callback={callback}/>
                 </Grid>
 
             </Grid>
+
+            <Snackbar
+                open={snackBarState.open}
+                onClose={handleClose}
+                TransitionComponent={Fade}
+                message="Copied to clipboard"
+                autoHideDuration={5000}
+            />
         </div >
     )
 }

@@ -33,6 +33,8 @@ export default function OCDIDResolver() {
     const [isValidDID, setIsValidDID] = useState(true)
     const classes = useStyles();
 
+    const [snackBarState, setState] = React.useState<{open: boolean, text:string}>({open: false,text:''});
+
     const dispatch = useDispatch()
 
     function getDID(){
@@ -54,6 +56,16 @@ export default function OCDIDResolver() {
         dispatch(setDID(did))
     }
 
+    function copyToClipboard(text: string) {
+        if (text !== '') {
+            navigator.clipboard.writeText(text);
+            setState({
+                open: true,
+                text:"Copied to clipboard"
+            });
+        }
+    }
+
     return (
         <Grid container spacing={3}>
 
@@ -66,10 +78,11 @@ export default function OCDIDResolver() {
             <Grid item xs={12}>
                 <TextField
                     id="did"
-                    label="DID"
-                    placeholder="did:ethr:0x0000000000000000000000000000000"
-                    variant="standard"
+                    label="Decentralized Identity (DID)"
                     fullWidth
+                    variant="outlined"
+                    inputProps={{ 'aria-label': 'description' }}
+                    placeholder="Paste a DID here to resolve its document..."
                     value={did}
                     onChange={(e: any) => handleDidInput(e.target.value)}
                     error={!isValidDID}
@@ -94,6 +107,7 @@ export default function OCDIDResolver() {
                     InputProps={{
                         readOnly: true,
                     }}
+                    onClick={() => {copyToClipboard(didDoc)}}
                 />
             </Grid>
 

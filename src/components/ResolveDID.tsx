@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Grid, TextField } from '@material-ui/core';
+import { Button, Grid, Snackbar, TextField, Fade } from '@material-ui/core';
 
 import { Resolver } from 'did-resolver'
 import { getResolver } from 'ethr-did-resolver'
@@ -15,6 +15,8 @@ export default function ResolveDID() {
     const did = useSelector(_did)
     const didDoc = useSelector(_didDoc)
     const dispatch = useDispatch()
+
+    const [snackBarState, setState] = React.useState<{open: boolean, text:string}>({open: false,text:''});
 
     const PROVIDER_NODE = 'https://ropsten.infura.io/ethr-did';
 
@@ -46,6 +48,23 @@ export default function ResolveDID() {
         }
     }
 
+    function copyToClipboard(text: string) {
+        if (text !== '') {
+            navigator.clipboard.writeText(text);
+            setState({
+                open: true,
+                text:"Copied to clipboard"
+            });
+        }
+    }
+
+    function handleClose() {
+        setState({
+            ...snackBarState,
+            open: false,
+        });
+    };
+
     return (
         <div>
             <Grid container spacing={3}>
@@ -68,6 +87,7 @@ export default function ResolveDID() {
                         id="standard-basic"
                         label="Decentralized Identity (DID)"
                         fullWidth
+                        variant="outlined"
                         inputProps={{ 'aria-label': 'description' }}
                         placeholder="Paste a DID here to resolve its document..."
                         value={did}
@@ -86,14 +106,23 @@ export default function ResolveDID() {
                     <TextField
                         id="standard-multiline-static"
                         label="DID-Doc"
+                        variant="outlined"
                         multiline
                         fullWidth
                         value={didDoc}
                         rowsMax={20}
+                        onClick={() => copyToClipboard(didDoc)}
                     />
                 </Grid>
 
             </Grid>
+            <Snackbar
+                open={snackBarState.open}
+                onClose={handleClose}
+                TransitionComponent={Fade}
+                message="Copied to clipboard"
+                autoHideDuration={5000}
+            />
         </div>
     )
 }

@@ -9,6 +9,7 @@ import { setHolderPublicKey, setPresentation, _holderPublicKey, _presentation, _
 
 import Title from './Title';
 import { verify, base64UrlDecode } from 'sd-vc-lib';
+import TextFieldWithCopy from './TextFieldWithCopy';
 
 export default function SDCredentialVerifier() {
 
@@ -82,7 +83,7 @@ export default function SDCredentialVerifier() {
                 <Grid item xs={12}>
                     <TextField
                         value={holderPublicKey}
-                        onChange={e => handleHolderPublicKeyInput(e.target.value)}
+                        onChange={(e:any) => handleHolderPublicKeyInput(e.target.value)}
                         label="Holder's Public Key"
                         variant="outlined"
                         multiline
@@ -93,7 +94,7 @@ export default function SDCredentialVerifier() {
                 <Grid item xs={12}>
                     <TextField
                         value={signerPublicKey}
-                        onChange={e => handleSignererPublicKeyInput(e.target.value)}
+                        onChange={(e:any) => handleSignererPublicKeyInput(e.target.value)}
                         label="Signer's Public Key"
                         variant="outlined"
                         multiline

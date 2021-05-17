@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, TextField, Button, FormControl, RadioGroup, FormControlLabel, Radio, Divider } from '@material-ui/core';
+import { Grid, TextField, Button, FormControl, RadioGroup, FormControlLabel, Radio, Divider, Snackbar, Fade } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 
@@ -46,6 +46,8 @@ export default function HDDID() {
     const address = useSelector(_address)
     const validMnemonic = useSelector(_validMnemonic)
     const classes = useStyles();
+
+    const [snackBarState, setState] = React.useState<{open: boolean, text:string}>({open: false,text:''});
 
     const dispatch = useDispatch()
 
@@ -136,6 +138,27 @@ export default function HDDID() {
 
     }
 
+    function handleClose() {
+        setState({
+            ...snackBarState,
+            open: false,
+        });
+    };
+
+    function callback(success:boolean){
+        if(success){
+            setState({
+                open: true,
+                text:"Copied to clipboard"
+            });
+        }else{
+            setState({
+                open: true,
+                text:"Clould not copied"
+            });
+        }
+    }
+
     return (
         <Grid container spacing={3}>
 
@@ -180,7 +203,6 @@ export default function HDDID() {
 
             <Grid item xs={12}>
                 <TextField
-                    id="standard-read-only-input"
                     label="Mnemonic Words"
                     variant="outlined"
                     fullWidth
@@ -193,26 +215,24 @@ export default function HDDID() {
             </Grid>
 
             <Grid item xs={12}>
-                <TextField
-                    id="standard-read-only-input"
+                <TextFieldWithCopy
                     label="Random Seed"
-                    variant="outlined"
-                    fullWidth
-                    multiline
+                    multiline={true}
                     value={seed}
+                    callback={callback} 
                 />
             </Grid>
 
             <Grid item xs={12}>
-                <TextFieldNormal label="Master Private Key" value={masterPrivateKey} />
+                <TextFieldWithCopy label="Master Private Key" value={masterPrivateKey} callback={callback}  />
             </Grid>
 
             <Grid item xs={12}>
-                <TextFieldNormal label="Master Public Key" value={masterPublicKey} />
+                <TextFieldWithCopy label="Master Public Key" value={masterPublicKey} callback={callback} />
             </Grid>
 
             <Grid item xs={12}>
-                <TextFieldNormal label="Master Chain Code" value={masterChainCode} />
+                <TextFieldWithCopy label="Master Chain Code" value={masterChainCode} callback={callback} />
             </Grid>
 
             <Divider />
@@ -232,22 +252,31 @@ export default function HDDID() {
             </Grid>
 
             <Grid item xs={12}>
-                <TextFieldWithCopy label="Child Private Key" value={childPrivateKey} />
+                <TextFieldWithCopy label="Child Private Key" value={childPrivateKey} callback={callback}  />
             </Grid>
 
             <Grid item xs={12}>
-                <TextFieldNormal label="Child Public Key" value={childPublicKey} />
+                <TextFieldWithCopy label="Child Public Key" value={childPublicKey} callback={callback} />
             </Grid>
 
             <Grid item xs={12}>
-                <TextFieldNormal label="Child Chain Code" value={childChainCode} />
+                <TextFieldWithCopy label="Child Chain Code" value={childChainCode} callback={callback}  />
             </Grid>
             <Grid item xs={12}>
-                <TextFieldNormal label="Ethereum Address" value={address} />
+                <TextFieldWithCopy label="Ethereum Address" value={address} callback={callback}  />
             </Grid>
             <Grid item xs={12}>
-                <TextFieldWithCopy label="Decentralized ID(DID)" value={did} />
+                <TextFieldWithCopy label="Decentralized ID(DID)" value={did} callback={callback} />
             </Grid>
+
+            <Snackbar
+                open={snackBarState.open}
+                onClose={handleClose}
+                TransitionComponent={Fade}
+                message="Copied to clipboard"
+                autoHideDuration={5000}
+            />
+            
         </Grid>
     )
 }

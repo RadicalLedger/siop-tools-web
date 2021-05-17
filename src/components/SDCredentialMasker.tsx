@@ -12,6 +12,7 @@ import MaskingComponent from './MaskingComponent';
 import JSONFormat from 'json-format'
 import { setCredentials, setHolderPrivateKey, setInputComponentList, setMasks, setVP, _credentials, _holderPrivateKey, _inputComponentList, _masks, _vp } from '../redux/presentSlice'
 import { base64UrlEncode } from 'sd-vc-lib'
+import TextFieldWithCopy from './TextFieldWithCopy';
 
 
 export default function SDCredentialMasker() {
@@ -25,11 +26,7 @@ export default function SDCredentialMasker() {
     const dispatch = useDispatch()
 
 
-    const [snackBarState, setState] = React.useState<{
-        open: boolean;
-    }>({
-        open: false,
-    });
+    const [snackBarState, setState] = React.useState<{open: boolean, text:string}>({open: false,text:''});
 
     function handlePrivateKeyInput(privateKey: string) {
         dispatch(setHolderPrivateKey(privateKey))
@@ -51,7 +48,22 @@ export default function SDCredentialMasker() {
         if (text !== '') {
             navigator.clipboard.writeText(text);
             setState({
-                open: true
+                open: true,
+                text:"Copied to clipboard"
+            });
+        }
+    }
+    
+    function callback(success:boolean){
+        if(success){
+            setState({
+                open: true,
+                text:"Copied to clipboard"
+            });
+        }else{
+            setState({
+                open: true,
+                text:"Clould not copied"
             });
         }
     }
@@ -94,17 +106,19 @@ export default function SDCredentialMasker() {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <IconButton aria-label="add" onClick={addNewInput}
-                        disabled={credentials[inputComponentList.length - 1] === ''}
-                    >
-                        <AddIcon />
-                    </IconButton>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        aria-label="add" onClick={addNewInput}
+                        disabled={credentials[inputComponentList.length - 1] === ''} 
+                        //TODO Add tooltip saying why this is disabled
+                    >Add more credentials</Button>
                 </Grid>
 
                 <Grid item xs={12}>
                     <TextField
                         value={holderPrivateKey}
-                        onChange={e => handlePrivateKeyInput(e.target.value)}
+                        onChange={(e:any) => handlePrivateKeyInput(e.target.value)}
                         label="Holder's Private Key"
                         variant="outlined"
                         multiline
@@ -117,13 +131,13 @@ export default function SDCredentialMasker() {
                         color="primary" variant="contained"
                         onClick={mask}
                         disabled={holderPrivateKey && masks && credentials ? false : true}
-                    >Mask</Button>
+                    >Mask & Present</Button>
                 </Grid>
 
                 <Grid item xs={12}>
                     <TextField
                         // value={JSONFormat(vp, {type:'tab'})}
-                        value={JSONFormat(vp, { type: 'tab' })}
+                        value={vp}
                         label="Presentation"
                         variant="outlined"
                         multiline

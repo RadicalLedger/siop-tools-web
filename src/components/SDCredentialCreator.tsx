@@ -1,5 +1,4 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles';
 import { Button, Fade, Grid, IconButton, List, Snackbar, TextField } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add';
 
@@ -9,6 +8,7 @@ import Title from './Title';
 import InputComponent from './InputComponent'
 import { issue, base64UrlEncode } from 'sd-vc-lib'
 import { _holderPublicKey, _inputComponentList, _signerPrivateKey, _signerPublicKey, setHolderPublicKey, setInputComponentList, setSignerPrivateKey, setSignerPublicKey, _keyArray, _valueArray, setVC, _vc, setKeyArray, setValueArray } from '../redux/issueSlice';
+import TextFieldWithCopy from './TextFieldWithCopy';
 // import {publicKeyCreate} from 'secp256k1'
 
 
@@ -23,11 +23,7 @@ export default function SDCredentialCreator() {
     const vc = useSelector(_vc)
     const dispatch = useDispatch()
 
-    const [snackBarState, setState] = React.useState<{
-        open: boolean;
-    }>({
-        open: false,
-    });
+    const [snackBarState, setState] = React.useState<{open: boolean, text:string}>({open: false,text:''});
 
     function addNewInput() {
         const i = inputComponentList.length
@@ -89,7 +85,22 @@ export default function SDCredentialCreator() {
         if (text !== '') {
             navigator.clipboard.writeText(text);
             setState({
-                open: true
+                open: true,
+                text:"Copied to clipboard"
+            });
+        }
+    }
+    
+    function callback(success:boolean){
+        if(success){
+            setState({
+                open: true,
+                text:"Copied to clipboard"
+            });
+        }else{
+            setState({
+                open: true,
+                text:"Clould not copied"
             });
         }
     }
@@ -126,17 +137,19 @@ export default function SDCredentialCreator() {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <IconButton aria-label="add" onClick={addNewInput}
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        aria-label="add" onClick={addNewInput}
                         disabled={keyArray[inputComponentList.length - 1] === '' || valueArray[inputComponentList.length - 1] === ''}
-                    >
-                        <AddIcon />
-                    </IconButton>
+                        //TODO Add tooltip saying why this is disabled
+                    >Add more claims</Button>
                 </Grid>
 
                 <Grid item xs={12}>
                     <TextField
                         value={holderPublicKey}
-                        onChange={e => handlePublicKeyInput(e.target.value)}
+                        onChange={(e: any) => handlePublicKeyInput(e.target.value)}
                         label="Holder's Public Key"
                         variant="outlined"
                         multiline
@@ -147,7 +160,7 @@ export default function SDCredentialCreator() {
                 <Grid item xs={12}>
                     <TextField
                         value={signerPrivateKey}
-                        onChange={e => handlePrivateKeyInput(e.target.value)}
+                        onChange={(e: any) => handlePrivateKeyInput(e.target.value)}
                         label="Signer's Private Key"
                         variant="outlined"
                         multiline
@@ -176,12 +189,12 @@ export default function SDCredentialCreator() {
             </Grid>
 
             <Snackbar
-                        open={snackBarState.open}
-                        onClose={handleClose}
-                        TransitionComponent={Fade}
-                        message="Copied to clipboard"
-                        autoHideDuration={5000}
-                    />
+                open={snackBarState.open}
+                onClose={handleClose}
+                TransitionComponent={Fade}
+                message={snackBarState.text}
+                autoHideDuration={5000}
+            />
 
 
 

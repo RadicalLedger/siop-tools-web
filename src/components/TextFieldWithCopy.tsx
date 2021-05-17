@@ -2,28 +2,27 @@ import React, { useState } from 'react';
 import { TextField, InputAdornment, ClickAwayListener, Tooltip, IconButton } from '@material-ui/core';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 
-export default function TextWithCopy(props: { label: string, value: string }) {
-
-    const [open, setOpen] = useState(false);
-    const [context, setContext] = useState(0);
-
-    const handleTooltipClose = () => {
-        setOpen(false);
-    };
-
-    const handleTooltipOpen = () => {
-        if (window.isSecureContext) {
-            setContext(1);
-        } else {
-            setContext(0);
-        }
-        setOpen(true);
-    };
+export default function TextWithCopy(props: {
+    label: string, value: string,
+    multiline?: boolean, error?: boolean,
+    helperText?: string,
+    callback?: any
+}) {
 
     const copyToClipboard = () => {
-        if (window.isSecureContext) {
-            navigator.clipboard.writeText(props.value);
-        }
+        if(props.value !==''){
+            if (window.isSecureContext) {
+                navigator.clipboard.writeText(props.value);
+                if(props.callback){
+                    props.callback(true)
+                }
+                
+            } else {
+                if(props.callback){
+                    props.callback(false)
+                }
+            }
+        }  
     }
 
     return (
@@ -32,30 +31,17 @@ export default function TextWithCopy(props: { label: string, value: string }) {
             variant="outlined"
             label={props.label}
             fullWidth
+            multiline={props.multiline}
             value={props.value}
+            error={props.error}
+            helperText={props.helperText}
             InputProps={{
                 readOnly: true,
                 endAdornment: <InputAdornment position="end">
 
-                    <ClickAwayListener onClickAway={handleTooltipClose}>
-                        <div>
-                            <Tooltip
-                                PopperProps={{
-                                    disablePortal: true,
-                                }}
-                                onClose={handleTooltipClose}
-                                open={open}
-                                disableFocusListener
-                                disableHoverListener
-                                disableTouchListener
-                                title={context === 1 ? "Copied" : "Couldn't copy"}
-                            >
-                                <IconButton aria-label="delete" onClick={() => { copyToClipboard(); handleTooltipOpen(); }}>
-                                    <FileCopyOutlinedIcon fontSize="small" />
-                                </IconButton>
-                            </Tooltip>
-                        </div>
-                    </ClickAwayListener>
+                    <IconButton aria-label="delete" onClick={() => { copyToClipboard();}}>
+                        <FileCopyOutlinedIcon fontSize="small" />
+                    </IconButton>
                 </InputAdornment>
             }}
 
