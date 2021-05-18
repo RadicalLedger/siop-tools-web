@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel, FormGroup, List, ListItem } from '@material-ui/core';
+import { Checkbox, FormControlLabel, FormGroup, List, ListItem, Typography } from '@material-ui/core';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { base64UrlDecode } from 'sd-vc-lib'
@@ -34,8 +34,10 @@ export default function Masker(props:any) {
 
     return (
         <div>
+            
             <FormGroup >
                 <List>
+                <Typography>Select to mask claims</Typography>
                     {
                         Object.keys(claims).map((key: string) => {
                             return <ListItem key={key}>
@@ -48,7 +50,7 @@ export default function Masker(props:any) {
                                             color="primary"
                                         />
                                     }
-                                    label={key}
+                                    label={`Claim "${key}" ${ masks[props.index][key] ? 'Masked' : 'Exposed'}`}
                                     labelPlacement="start"
                                 />
                             </ListItem>

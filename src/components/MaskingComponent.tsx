@@ -1,4 +1,4 @@
-import { IconButton, makeStyles, TextField } from '@material-ui/core';
+import { IconButton, makeStyles, TextField, Typography } from '@material-ui/core';
 import MinimizeIcon from '@material-ui/icons/Minimize';
 import React from 'react'
 
