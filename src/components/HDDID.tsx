@@ -1,16 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Grid, TextField, Button, FormControl, RadioGroup, FormControlLabel, Radio, Divider, Snackbar, Fade } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 
 import TextFieldWithCopy from './TextFieldWithCopy'
-import TextFieldNormal from './TextFieldNormal'
 import Title from './Title'
 
 import Wallet, { generateMnemonic, getSeedFromMnemonic, Types, validateMnemonic } from 'did-hd-wallet'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { _address, _childChainCode, _childPrivateKey, _childPublicKey, _derivationPath, _did, _masterChainCode, _masterPrivateKey, _masterPublicKey, _mnemonic, _seed, _strength, setStrength, setAddress, setChildChainCode, setChildPrivateKey, setChildPublicKey, setDID, setDerivationPath, setMasterChainCode, setMasterPrivateKey, setMasterPublicKey, setMnemonic, setSeed, setMnemonicValidity, _validMnemonic } from '../redux/hdDIDSlice';
+import { _address, _childChainCode, _childPrivateKey, _childPublicKey, _derivationPath, _did, _masterChainCode, _masterPrivateKey, _masterPublicKey, _mnemonic, _seed, _strength, setStrength, setAddress, setChildChainCode, setChildPrivateKey, setChildPublicKey, setDID, setDerivationPath, setMasterChainCode, setMasterPrivateKey, setMasterPublicKey, setMnemonic, setSeed, setMnemonicValidity, _validMnemonic, setTopMnemonics, _topMnemonics } from '../redux/hdDIDSlice';
+import { Autocomplete, createFilterOptions } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -25,6 +25,8 @@ const useStyles = makeStyles((theme: Theme) =>
         }
     }),
 );
+
+const filter = createFilterOptions();
 
 /**
  * HD wallet component
@@ -45,9 +47,10 @@ export default function HDDID() {
     const did = useSelector(_did)
     const address = useSelector(_address)
     const validMnemonic = useSelector(_validMnemonic)
+    const topMnemonics = useSelector(_topMnemonics)
     const classes = useStyles();
 
-    const [snackBarState, setState] = React.useState<{open: boolean, text:string}>({open: false,text:''});
+    const [snackBarState, setState] = React.useState<{ open: boolean, text: string }>({ open: false, text: '' });
 
     const dispatch = useDispatch()
 
@@ -59,9 +62,41 @@ export default function HDDID() {
         }
     };
 
+    useEffect(() => {
+        const topMnemonicsStored = localStorage.getItem('topMnemonics')
+        try{
+            dispatch(setTopMnemonics(JSON.parse(topMnemonicsStored || '[]')))
+        }catch(e){
+            dispatch(setTopMnemonics([]))
+        }
+        
+    },[dispatch])
+
+    function addMnemonics(mnemonic:string){
+        let topMnemonics = localStorage.getItem('topMnemonics')
+        let newTopMnemonics;
+        if(topMnemonics){
+            try{
+                newTopMnemonics = JSON.parse(topMnemonics)
+            }catch(e){
+                newTopMnemonics = []
+            }
+        }else{
+            newTopMnemonics = []
+        }
+        newTopMnemonics.push(mnemonic)
+        if(newTopMnemonics.length > 10){
+            newTopMnemonics = newTopMnemonics.slice(newTopMnemonics.length - 10)
+        }
+        dispatch(setTopMnemonics(newTopMnemonics))
+        localStorage.setItem('topMnemonics', JSON.stringify(newTopMnemonics))
+    }
+
     function handleGenerateSeed(): void {
 
         const mnemonic = generateMnemonic(strength)
+        addMnemonics(mnemonic)
+        console.log(topMnemonics)
         const seed = getSeedFromMnemonic(mnemonic)
 
         dispatch(setMnemonic(mnemonic))
@@ -114,6 +149,7 @@ export default function HDDID() {
         let success: boolean = true
         dispatch(setMnemonic(mnemonic))
         if (validateMnemonic(mnemonic)) {
+            addMnemonics(mnemonic)
             let seed: string = ''
             try {
                 seed = getSeedFromMnemonic(mnemonic)
@@ -138,6 +174,32 @@ export default function HDDID() {
 
     }
 
+    function handleMnemonicAutoComplete(event: any, newValue: any) {
+        let mnemonic;
+        if (typeof newValue === 'string') {
+            mnemonic = newValue
+        } else if (newValue && newValue.inputValue) {
+            mnemonic = newValue.inputValue
+        } else {
+            mnemonic = newValue
+        }
+
+        let success: boolean = true
+        dispatch(setMnemonic(mnemonic))
+        if (mnemonic) {
+            let seed = getSeedFromMnemonic(mnemonic)
+            success = true
+            createKeysAndUpdate(seed)
+
+        } else {
+            dispatch(setSeed(''))
+            dispatch(setMasterPrivateKey(''))
+            dispatch(setMasterChainCode(''))
+            dispatch(setMasterPublicKey(''))
+        }
+        dispatch(setMnemonicValidity(success))
+    }
+
     function handleClose() {
         setState({
             ...snackBarState,
@@ -145,16 +207,16 @@ export default function HDDID() {
         });
     };
 
-    function callback(success:boolean){
-        if(success){
+    function callback(success: boolean) {
+        if (success) {
             setState({
                 open: true,
-                text:"Copied to clipboard"
+                text: "Copied to clipboard"
             });
-        }else{
+        } else {
             setState({
                 open: true,
-                text:"Clould not copied"
+                text: "Clould not copied"
             });
         }
     }
@@ -195,22 +257,54 @@ export default function HDDID() {
                     <Alert severity="warning">
                         Write down these words and kept in a secure place.
                         This is the only way to recover your credentials in case you lost them.
-                </Alert>
+                    </Alert>
                 </div>
             </Grid>
 
 
 
             <Grid item xs={12}>
-                <TextField
-                    label="Mnemonic Words"
-                    variant="outlined"
-                    fullWidth
-                    multiline
+                <Autocomplete
                     value={mnemonic}
-                    onChange={(e: any) => handleMnemonicInput(e.target.value)}
-                error={!validMnemonic}
-                helperText={validMnemonic ? "" : "Invalid mnemonic"}
+                    onChange={handleMnemonicAutoComplete}
+                    filterOptions={(options: any, params: any) => {
+                        const filtered = filter(options, params);
+
+                        // Suggest the creation of a new value
+                        if (params.inputValue !== '') {
+                            filtered.push(
+                                params.inputValue
+                            );
+                        }
+
+                        return filtered;
+                    }}
+                    options={topMnemonics}
+                    getOptionLabel={(option: any) => {
+                        // Value selected with enter, right from the input
+                        if (typeof option === 'string') {
+                            return option;
+                        }
+                        // Add "xxx" option created dynamically
+                        if (option.inputValue) {
+                            return option.inputValue;
+                        }
+                        // Regular option
+                        return option;
+                    }}
+                    renderOption={(option: any) => option}
+                    freeSolo
+                    renderInput={(params) => (
+                        <TextField {...params}
+                            label="Mnemonic Words"
+                            variant="outlined"
+                            onChange={(e: any) => handleMnemonicInput(e.target.value)}
+                            fullWidth
+                            multiline
+                            error={!validMnemonic}
+                            helperText={validMnemonic ? "" : "Invalid mnemonic"}
+                        />
+                    )}
                 />
             </Grid>
 
@@ -219,12 +313,12 @@ export default function HDDID() {
                     label="Random Seed"
                     multiline={true}
                     value={seed}
-                    callback={callback} 
+                    callback={callback}
                 />
             </Grid>
 
             <Grid item xs={12}>
-                <TextFieldWithCopy label="Master Private Key" value={masterPrivateKey} callback={callback}  />
+                <TextFieldWithCopy label="Master Private Key" value={masterPrivateKey} callback={callback} />
             </Grid>
 
             <Grid item xs={12}>
@@ -252,7 +346,7 @@ export default function HDDID() {
             </Grid>
 
             <Grid item xs={12}>
-                <TextFieldWithCopy label="Child Private Key" value={childPrivateKey} callback={callback}  />
+                <TextFieldWithCopy label="Child Private Key" value={childPrivateKey} callback={callback} />
             </Grid>
 
             <Grid item xs={12}>
@@ -260,10 +354,10 @@ export default function HDDID() {
             </Grid>
 
             <Grid item xs={12}>
-                <TextFieldWithCopy label="Child Chain Code" value={childChainCode} callback={callback}  />
+                <TextFieldWithCopy label="Child Chain Code" value={childChainCode} callback={callback} />
             </Grid>
             <Grid item xs={12}>
-                <TextFieldWithCopy label="Ethereum Address" value={address} callback={callback}  />
+                <TextFieldWithCopy label="Ethereum Address" value={address} callback={callback} />
             </Grid>
             <Grid item xs={12}>
                 <TextFieldWithCopy label="Decentralized ID(DID)" value={did} callback={callback} />
@@ -276,7 +370,7 @@ export default function HDDID() {
                 message="Copied to clipboard"
                 autoHideDuration={5000}
             />
-            
+
         </Grid>
     )
 }
