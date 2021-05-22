@@ -60,6 +60,22 @@ export default function SDCredentialVerifier() {
         });
     };
 
+    function getDisclosedCredentials(presentation:any){
+        // console.log(presentation)
+        const disclosedCredentials = []
+        for(const credential of presentation['credentials']){
+            const claims:any = {}
+            for(const item of Object.keys(credential['claims'])){
+                if(credential['mask'][item] !== true){
+                    claims[item] = credential['claims'][item]
+                }
+            }
+            disclosedCredentials.push(claims)
+        }
+        console.log(disclosedCredentials)
+        return disclosedCredentials
+    }
+
     return (
         <div>
             <Grid container spacing={3}>
@@ -121,6 +137,15 @@ export default function SDCredentialVerifier() {
                     <TextField
                         value={verified === 'Presentation Verified' ? JSONFormat(JSON.parse(base64UrlDecode(presentation)), { type: 'tab' }) : ''}
                         label="Decoded Presentation"
+                        multiline
+                        fullWidth
+                        variant="outlined"
+                    />
+                </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        value={verified === 'Presentation Verified' ? JSONFormat(getDisclosedCredentials(JSON.parse(base64UrlDecode(presentation)))) : ''}
+                        label="Disclosed credentials"
                         multiline
                         fullWidth
                         variant="outlined"
