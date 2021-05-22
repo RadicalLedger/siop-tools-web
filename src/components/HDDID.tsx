@@ -9,7 +9,7 @@ import Title from './Title'
 import Wallet, { generateMnemonic, getSeedFromMnemonic, Types, validateMnemonic } from 'did-hd-wallet'
 
 import { useDispatch, useSelector } from 'react-redux'
-import { _address, _childChainCode, _childPrivateKey, _childPublicKey, _derivationPath, _did, _masterChainCode, _masterPrivateKey, _masterPublicKey, _mnemonic, _seed, _strength, setStrength, setAddress, setChildChainCode, setChildPrivateKey, setChildPublicKey, setDID, setDerivationPath, setMasterChainCode, setMasterPrivateKey, setMasterPublicKey, setMnemonic, setSeed, setMnemonicValidity, _validMnemonic, setTopMnemonics, _topMnemonics } from '../redux/hdDIDSlice';
+import { _address, _childChainCode, _childPrivateKey, _childPublicKey, _derivationPath, _did, _masterChainCode, _masterPrivateKey, _masterPublicKey, _mnemonic, _seed, _strength, setStrength, setAddress, setChildChainCode, setChildPrivateKey, setChildPublicKey, setDID, setDerivationPath, setMasterChainCode, setMasterPrivateKey, setMasterPublicKey, setMnemonic, setSeed, setMnemonicValidity, _validMnemonic, setTopMnemonics, _topMnemonics, _validDerPath, setDerPathValidity } from '../redux/hdDIDSlice';
 import { Autocomplete, createFilterOptions } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -47,6 +47,7 @@ export default function HDDID() {
     const did = useSelector(_did)
     const address = useSelector(_address)
     const validMnemonic = useSelector(_validMnemonic)
+    const validDerPath = useSelector(_validDerPath)
     const topMnemonics = useSelector(_topMnemonics)
     const classes = useStyles();
 
@@ -64,28 +65,28 @@ export default function HDDID() {
 
     useEffect(() => {
         const topMnemonicsStored = localStorage.getItem('topMnemonics')
-        try{
+        try {
             dispatch(setTopMnemonics(JSON.parse(topMnemonicsStored || '[]')))
-        }catch(e){
+        } catch (e) {
             dispatch(setTopMnemonics([]))
         }
-        
-    },[dispatch])
 
-    function addMnemonics(mnemonic:string){
+    }, [dispatch])
+
+    function addMnemonics(mnemonic: string) {
         let topMnemonics = localStorage.getItem('topMnemonics')
         let newTopMnemonics;
-        if(topMnemonics){
-            try{
+        if (topMnemonics) {
+            try {
                 newTopMnemonics = JSON.parse(topMnemonics)
-            }catch(e){
+            } catch (e) {
                 newTopMnemonics = []
             }
-        }else{
+        } else {
             newTopMnemonics = []
         }
         newTopMnemonics.push(mnemonic)
-        if(newTopMnemonics.length > 10){
+        if (newTopMnemonics.length > 10) {
             newTopMnemonics = newTopMnemonics.slice(newTopMnemonics.length - 10)
         }
         dispatch(setTopMnemonics(newTopMnemonics))
@@ -129,7 +130,7 @@ export default function HDDID() {
         try {
             const wallet = new Wallet(Types.SEED, seed)
             const { privateKey, publicKey, chainCode, ethAddress, did } = wallet.getChildKeys(derPath)
-
+            dispatch(setDerPathValidity(true))
             dispatch(setAddress(ethAddress))
             dispatch(setChildPrivateKey(privateKey || ''))
             dispatch(setChildPublicKey(publicKey))
@@ -137,6 +138,7 @@ export default function HDDID() {
             dispatch(setDID(did))
 
         } catch {
+            dispatch(setDerPathValidity(false))
             dispatch(setAddress(''))
             dispatch(setChildPrivateKey(''))
             dispatch(setChildPublicKey(''))
@@ -147,7 +149,7 @@ export default function HDDID() {
 
     function handleMnemonicInput(mnemonic: string): void {
         let success: boolean = true
-        dispatch(setMnemonic(mnemonic))
+
         if (validateMnemonic(mnemonic)) {
             addMnemonics(mnemonic)
             let seed: string = ''
@@ -170,6 +172,7 @@ export default function HDDID() {
             dispatch(setMasterChainCode(''))
             dispatch(setMasterPublicKey(''))
         }
+        dispatch(setMnemonic(mnemonic))
         dispatch(setMnemonicValidity(success))
 
     }
@@ -185,18 +188,20 @@ export default function HDDID() {
         }
 
         let success: boolean = true
-        dispatch(setMnemonic(mnemonic))
+
         if (mnemonic) {
             let seed = getSeedFromMnemonic(mnemonic)
             success = true
             createKeysAndUpdate(seed)
 
         } else {
+            success = false
             dispatch(setSeed(''))
             dispatch(setMasterPrivateKey(''))
             dispatch(setMasterChainCode(''))
             dispatch(setMasterPublicKey(''))
         }
+        dispatch(setMnemonic(mnemonic))
         dispatch(setMnemonicValidity(success))
     }
 
@@ -222,147 +227,156 @@ export default function HDDID() {
     }
 
     return (
-        <Grid container spacing={3}>
+        <div>
+            <Grid container spacing={3}>
 
-            <Grid item xs={12}>
-                <Title>
-                    {'Generate HD DIDs'}
-                </Title>
-            </Grid>
+                <Grid item xs={12}>
+                    <Title>
+                        {'Generate HD DIDs'}
+                    </Title>
+                </Grid>
 
-            <Grid item xs={12}>
-                <div className={classes.root}>
-                    <Alert severity="info">Enter mnemonic words or create new random seed</Alert>
-                </div>
-            </Grid>
+                <Grid item xs={12}>
+                    <div className={classes.root}>
+                        <Alert severity="info">Enter mnemonic words or create new random seed</Alert>
+                    </div>
+                </Grid>
 
-            <Grid item xs={12}>
-                <FormControl component="fieldset">
-                    <RadioGroup row aria-label="numBits"
-                        name="numbits"
-                        value={strength.toString()}
-                        onChange={e => handleNumBitSelection(e.target.value)}>
-                        <FormControlLabel value="128" control={<Radio />} label="128 bit" />
-                        <FormControlLabel value="256" control={<Radio />} label="256 bit" />
-                    </RadioGroup>
-                </FormControl>
-            </Grid>
-
-
-            <Grid item xs={12}>
-                <Button className={classes.btn} onClick={handleGenerateSeed} variant="contained" color="primary">
-                    Generate New Random Seed
-                </Button>
-                <div className={classes.root}>
-                    <Alert severity="warning">
-                        Write down these words and kept in a secure place.
-                        This is the only way to recover your credentials in case you lost them.
-                    </Alert>
-                </div>
-            </Grid>
+                <Grid item xs={12}>
+                    <FormControl component="fieldset">
+                        <RadioGroup row aria-label="numBits"
+                            name="numbits"
+                            value={strength.toString()}
+                            onChange={e => handleNumBitSelection(e.target.value)}>
+                            <FormControlLabel value="128" control={<Radio />} label="128 bit" />
+                            <FormControlLabel value="256" control={<Radio />} label="256 bit" />
+                        </RadioGroup>
+                    </FormControl>
+                </Grid>
 
 
+                <Grid item xs={12}>
+                    <Button className={classes.btn} onClick={handleGenerateSeed} variant="contained" color="primary">
+                        Generate New Random Seed
+                    </Button>
+                    <div className={classes.root}>
+                        <Alert severity="warning">
+                            Write down these words and kept in a secure place.
+                            This is the only way to recover your credentials in case you lost them.
+                        </Alert>
+                    </div>
+                </Grid>
 
-            <Grid item xs={12}>
-                <Autocomplete
-                    value={mnemonic}
-                    onChange={handleMnemonicAutoComplete}
-                    filterOptions={(options: any, params: any) => {
-                        const filtered = filter(options, params);
 
-                        // Suggest the creation of a new value
-                        if (params.inputValue !== '') {
-                            filtered.push(
-                                params.inputValue
-                            );
-                        }
 
-                        return filtered;
-                    }}
-                    options={topMnemonics}
-                    getOptionLabel={(option: any) => {
-                        // Value selected with enter, right from the input
-                        if (typeof option === 'string') {
+                <Grid item xs={12}>
+                    <Autocomplete
+                        value={mnemonic}
+                        onChange={handleMnemonicAutoComplete}
+                        filterOptions={(options: any, params: any) => {
+                            const filtered = filter(options, params);
+
+                            // Suggest the creation of a new value
+                            if (params.inputValue !== '') {
+                                filtered.push(
+                                    params.inputValue
+                                );
+                            }
+
+                            return filtered;
+                        }}
+                        options={topMnemonics}
+                        getOptionLabel={(option: any) => {
+                            // Value selected with enter, right from the input
+                            if (typeof option === 'string') {
+                                return option;
+                            }
+                            // Add "xxx" option created dynamically
+                            if (option.inputValue) {
+                                return option.inputValue;
+                            }
+                            // Regular option
                             return option;
-                        }
-                        // Add "xxx" option created dynamically
-                        if (option.inputValue) {
-                            return option.inputValue;
-                        }
-                        // Regular option
-                        return option;
-                    }}
-                    renderOption={(option: any) => option}
-                    freeSolo
-                    renderInput={(params) => (
-                        <TextField {...params}
-                            label="Mnemonic Words"
-                            variant="outlined"
-                            onChange={(e: any) => handleMnemonicInput(e.target.value)}
-                            fullWidth
-                            multiline
-                            error={!validMnemonic}
-                            helperText={validMnemonic ? "" : "Invalid mnemonic"}
-                        />
-                    )}
-                />
+                        }}
+                        renderOption={(option: any) => option}
+                        freeSolo
+                        renderInput={(params) => (
+                            <TextField {...params}
+                                label="Mnemonic Words"
+                                variant="outlined"
+                                onChange={(e: any) => handleMnemonicInput(e.target.value)}
+                                fullWidth
+                                multiline
+                                error={!validMnemonic && mnemonic !== ''}
+                                helperText={(validMnemonic || mnemonic === '') ? "" : "Invalid mnemonic"}
+                            />
+                        )}
+                    />
+                </Grid>
             </Grid>
+            {validMnemonic && <Grid container spacing={3}>
 
-            <Grid item xs={12}>
-                <TextFieldWithCopy
-                    label="Random Seed"
-                    multiline={true}
-                    value={seed}
-                    callback={callback}
-                />
-            </Grid>
+                <Grid item xs={12}>
+                    <TextFieldWithCopy
+                        label="Random Seed"
+                        multiline={true}
+                        value={seed}
+                        callback={callback}
+                    />
+                </Grid>
 
-            <Grid item xs={12}>
-                <TextFieldWithCopy label="Master Private Key" value={masterPrivateKey} callback={callback} />
-            </Grid>
+                <Grid item xs={12}>
+                    <TextFieldWithCopy label="Master Private Key" value={masterPrivateKey} callback={callback} />
+                </Grid>
 
-            <Grid item xs={12}>
-                <TextFieldWithCopy label="Master Public Key" value={masterPublicKey} callback={callback} />
-            </Grid>
+                <Grid item xs={12}>
+                    <TextFieldWithCopy label="Master Public Key" value={masterPublicKey} callback={callback} />
+                </Grid>
 
-            <Grid item xs={12}>
-                <TextFieldWithCopy label="Master Chain Code" value={masterChainCode} callback={callback} />
-            </Grid>
+                <Grid item xs={12}>
+                    <TextFieldWithCopy label="Master Chain Code" value={masterChainCode} callback={callback} />
+                </Grid>
 
-            <Divider />
+                <Divider />
 
-            <Grid item xs={12}>
-                <TextField
-                    id="standard-basic"
-                    label="Enter Derivation Path"
-                    variant="outlined"
-                    fullWidth
-                    inputProps={{ 'aria-label': 'description' }}
-                    placeholder="m/0/0'"
-                    value={derivationPath}
-                    disabled={seed === ""}
-                    onChange={(e: any) => handleDerivationPathInput(e.target.value)}
-                />
-            </Grid>
+                <Grid item xs={12}>
+                    <TextField
+                        id="standard-basic"
+                        label="Enter Derivation Path"
+                        variant="outlined"
+                        fullWidth
+                        inputProps={{ 'aria-label': 'description' }}
+                        placeholder="m/0/0'"
+                        value={derivationPath}
+                        disabled={seed === ""}
+                        onChange={(e: any) => handleDerivationPathInput(e.target.value)}
+                    />
+                </Grid>
 
-            <Grid item xs={12}>
-                <TextFieldWithCopy label="Child Private Key" value={childPrivateKey} callback={callback} />
             </Grid>
+            }
+            {validMnemonic && validDerPath &&
+                <Grid container spacing={3}>
 
-            <Grid item xs={12}>
-                <TextFieldWithCopy label="Child Public Key" value={childPublicKey} callback={callback} />
-            </Grid>
+                    <Grid item xs={12}>
+                        <TextFieldWithCopy label="Child Private Key" value={childPrivateKey} callback={callback} />
+                    </Grid>
 
-            <Grid item xs={12}>
-                <TextFieldWithCopy label="Child Chain Code" value={childChainCode} callback={callback} />
-            </Grid>
-            <Grid item xs={12}>
-                <TextFieldWithCopy label="Ethereum Address" value={address} callback={callback} />
-            </Grid>
-            <Grid item xs={12}>
-                <TextFieldWithCopy label="Decentralized ID(DID)" value={did} callback={callback} />
-            </Grid>
+                    <Grid item xs={12}>
+                        <TextFieldWithCopy label="Child Public Key" value={childPublicKey} callback={callback} />
+                    </Grid>
 
+                    <Grid item xs={12}>
+                        <TextFieldWithCopy label="Child Chain Code" value={childChainCode} callback={callback} />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextFieldWithCopy label="Ethereum Address" value={address} callback={callback} />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextFieldWithCopy label="Decentralized ID(DID)" value={did} callback={callback} />
+                    </Grid>
+
+                </Grid>}
             <Snackbar
                 open={snackBarState.open}
                 onClose={handleClose}
@@ -370,7 +384,6 @@ export default function HDDID() {
                 message="Copied to clipboard"
                 autoHideDuration={5000}
             />
-
-        </Grid>
+        </div>
     )
 }
