@@ -74,12 +74,20 @@ export default function OCDIDUpdater() {
                         console.log('err', err.response.data.error)
                         setIsUpdating(false)
                         setIsUpdated(false)
-                        dispatch(setDIDDocument(err.response.data.error))
+                        if (err.response && err.response.data.error) {
+                            dispatch(setDIDDocument(err.response.data.error))
+                        } else {
+                            dispatch(setDIDDocument("Error"))
+                        }
                     })
             }).catch(err => {
                 setIsUpdating(false)
                 setIsUpdated(false)
-                dispatch(setDIDDocument(err.response.data.error))
+                if (err.response && err.response.data.error) {
+                    dispatch(setDIDDocument(err.response.data.error))
+                } else {
+                    dispatch(setDIDDocument("Error"))
+                }
             })
         }else{
             setIsValidDID(false)
