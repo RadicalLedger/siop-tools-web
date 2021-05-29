@@ -34,32 +34,32 @@ export default function OCDIDResolver() {
     const [isValidDID, setIsValidDID] = useState(true)
     const classes = useStyles();
 
-    const [snackBarState, setState] = React.useState<{open: boolean, text:string}>({open: false,text:''});
+    const [snackBarState, setState] = React.useState<{ open: boolean, text: string }>({ open: false, text: '' });
     const [isResolving, setIsResolving] = useState(false)
 
     const dispatch = useDispatch()
 
-    function getDID(){
-        if(isAddress(did.split(':')[2])){
+    function getDID() {
+        if (isAddress(did.split(':')[2])) {
             setIsValidDID(true)
             setIsResolving(true)
-            axios.get(`${process.env.REACT_APP_BACKEND}/did/${did}`).then((res:any) => {
+            axios.get(`${process.env.REACT_APP_BACKEND}/did/${did}`).then((res: any) => {
                 console.log(res.data)
                 dispatch(setDIDDocument(JSON.stringify(res.data.didDocument)))
                 setIsResolving(false)
-              }).catch(err => {
+            }).catch(err => {
                 if (err.response && err.response.data.error) {
                     dispatch(setDIDDocument(err.response.data.error))
                 } else {
                     dispatch(setDIDDocument("Error"))
                 }
                 setIsResolving(false)
-              })
-        }else{
+            })
+        } else {
             setIsValidDID(false)
         }
-        
-      }
+
+    }
 
     function handleDidInput(did: string): void {
         dispatch(setDID(did))
@@ -67,11 +67,19 @@ export default function OCDIDResolver() {
 
     function copyToClipboard(text: string) {
         if (text !== '') {
-            navigator.clipboard.writeText(text);
-            setState({
-                open: true,
-                text:"Copied to clipboard"
-            });
+            if (window.isSecureContext) {
+                navigator.clipboard.writeText(text);
+                setState({
+                    open: true,
+                    text: "Copied to clipboard"
+                });
+
+            } else {
+                setState({
+                    open: true,
+                    text: "Clould not copied"
+                });
+            }
         }
     }
 
@@ -116,11 +124,11 @@ export default function OCDIDResolver() {
                     InputProps={{
                         readOnly: true,
                     }}
-                    onClick={() => {copyToClipboard(didDoc)}}
+                    onClick={() => { copyToClipboard(didDoc) }}
                 />
             </Grid>
             {isResolving && <Spinner />}
-            
+
         </Grid>
     )
 }

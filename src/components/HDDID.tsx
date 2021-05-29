@@ -381,7 +381,7 @@ export default function HDDID() {
                 open={snackBarState.open}
                 onClose={handleClose}
                 TransitionComponent={Fade}
-                message="Copied to clipboard"
+                message={snackBarState.text}
                 autoHideDuration={5000}
             />
         </div>

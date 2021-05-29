@@ -50,11 +50,19 @@ export default function ResolveDID() {
 
     function copyToClipboard(text: string) {
         if (text !== '') {
-            navigator.clipboard.writeText(text);
-            setState({
-                open: true,
-                text:"Copied to clipboard"
-            });
+            if (window.isSecureContext) {
+                navigator.clipboard.writeText(text);
+                setState({
+                    open: true,
+                    text: "Copied to clipboard"
+                });
+
+            } else {
+                setState({
+                    open: true,
+                    text: "Clould not copied"
+                });
+            }
         }
     }
 
