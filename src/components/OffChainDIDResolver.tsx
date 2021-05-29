@@ -7,6 +7,7 @@ import { isAddress } from '../utils';
 
 import { useDispatch, useSelector } from 'react-redux'
 import { setDID, setDIDDocument, _did, _didDoc } from '../redux/offResolverSlice'
+import Spinner from './Spinner';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -34,17 +35,21 @@ export default function OCDIDResolver() {
     const classes = useStyles();
 
     const [snackBarState, setState] = React.useState<{open: boolean, text:string}>({open: false,text:''});
+    const [isResolving, setIsResolving] = useState(false)
 
     const dispatch = useDispatch()
 
     function getDID(){
         if(isAddress(did.split(':')[2])){
             setIsValidDID(true)
+            setIsResolving(true)
             axios.get(`${process.env.REACT_APP_BACKEND}/did/${did}`).then((res:any) => {
                 console.log(res.data)
                 dispatch(setDIDDocument(JSON.stringify(res.data.didDocument)))
+                setIsResolving(false)
               }).catch(err => {
                 dispatch(setDIDDocument('Error'))
+                setIsResolving(false)
               })
         }else{
             setIsValidDID(false)
@@ -110,7 +115,7 @@ export default function OCDIDResolver() {
                     onClick={() => {copyToClipboard(didDoc)}}
                 />
             </Grid>
-
+            {isResolving && <Spinner />}
             
         </Grid>
     )
