@@ -71,14 +71,15 @@ export default function OCDIDUpdater() {
                         dispatch(setDIDDocument(JSON.stringify(res.data.newResolution.didDocument)))
                         setIsUpdated(true)
                     }).catch(err => {
+                        console.log('err', err.response.data.error)
                         setIsUpdating(false)
                         setIsUpdated(false)
-                        dispatch(setDIDDocument(err.message))
+                        dispatch(setDIDDocument(err.response.data.error))
                     })
             }).catch(err => {
                 setIsUpdating(false)
                 setIsUpdated(false)
-                dispatch(setDIDDocument(err.message))
+                dispatch(setDIDDocument(err.response.data.error))
             })
         }else{
             setIsValidDID(false)

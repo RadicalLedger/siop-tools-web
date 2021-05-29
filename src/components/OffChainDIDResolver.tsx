@@ -48,7 +48,7 @@ export default function OCDIDResolver() {
                 dispatch(setDIDDocument(JSON.stringify(res.data.didDocument)))
                 setIsResolving(false)
               }).catch(err => {
-                dispatch(setDIDDocument('Error'))
+                dispatch(setDIDDocument(err.response.data.error))
                 setIsResolving(false)
               })
         }else{

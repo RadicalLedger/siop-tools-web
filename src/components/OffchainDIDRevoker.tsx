@@ -68,12 +68,12 @@ export default function OCDIDRevoker() {
                     setIsRevoked(true)
                     setIsRevoking(false)
                   }).catch(err => {
-                    dispatch(setDIDDocument(err.message))
+                    dispatch(setDIDDocument(err.response.data.error))
                     setIsRevoked(false)
                     setIsRevoking(false)
                   })
               }).catch(err => {
-                dispatch(setDIDDocument(err.message))
+                dispatch(setDIDDocument(err.response.data.error))
                 setIsRevoked(false)
                 setIsRevoking(false)
               })
