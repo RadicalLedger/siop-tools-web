@@ -1,20 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../app/store';
 
-interface offResolverState {
+interface offRevokerState {
   did: string;
   privateKey: string;
   didDoc: string;
 }
 
-const initialState: offResolverState = {
+const initialState: offRevokerState = {
   did: '',
   privateKey: '',
   didDoc: ''
 };
 
-export const offResolverSlice = createSlice({
-  name: 'off-resolve',
+export const offRevokerSlice = createSlice({
+  name: 'off-revoke ',
   initialState,
   reducers: {
 
@@ -30,10 +30,10 @@ export const offResolverSlice = createSlice({
   },
 });
 
-export const { setDID, setPrivateKey, setDIDDocument } = offResolverSlice.actions;
+export const { setDID, setPrivateKey, setDIDDocument } = offRevokerSlice.actions;
 
 export const _did = (state: RootState) => state.offRevoker.did;
 export const _privateKey = (state: RootState) => state.offRevoker.privateKey;
 export const _didDoc = (state: RootState) => state.offRevoker.didDoc;
 
-export default offResolverSlice.reducer;
+export default offRevokerSlice.reducer;
