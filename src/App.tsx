@@ -24,6 +24,7 @@ import ResolveDID from './components/ResolveDID';
 import OCDIDResolver from './components/OffChainDIDResolver';
 import OCDIDUpdater from './components/OffchainDIDUpdater';
 import OCDIDRevoker from './components/OffchainDIDRevoker';
+import OCDIDCreator from './components/OffChainDIDCreator';
 
 const drawerWidth = 200
 
@@ -115,12 +116,15 @@ function App() {
       currentView = <SDCredentialVerifier />
       break
     case (7):
-      currentView = <OCDIDResolver />
+      currentView = <OCDIDCreator />
       break
     case (8):
-      currentView = <OCDIDUpdater />
+      currentView = <OCDIDResolver />
       break
     case (9):
+      currentView = <OCDIDUpdater />
+      break
+    case (10):
       currentView = <OCDIDRevoker />
       break
     default:

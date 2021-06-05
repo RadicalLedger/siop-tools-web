@@ -51,12 +51,15 @@ export default function DrawerItems() {
           <ListItemText primary="Verify Presentation" />
         </ListItem>
         <ListItem className={view === 7 ? classes.selected : classes.unselected} button key="off-chain-did-resolve" onClick={() => { dispatch(setView(7)) }}>
+          <ListItemText primary="Create offchain DID" />
+        </ListItem>
+        <ListItem className={view === 8 ? classes.selected : classes.unselected} button key="off-chain-did-resolve" onClick={() => { dispatch(setView(8)) }}>
           <ListItemText primary="Resolve offchain DID" />
         </ListItem>
-        <ListItem className={view === 8 ? classes.selected : classes.unselected} button key="off-chain-did-update" onClick={() => { dispatch(setView(8)) }}>
+        <ListItem className={view === 9 ? classes.selected : classes.unselected} button key="off-chain-did-update" onClick={() => { dispatch(setView(9)) }}>
           <ListItemText primary="Update offchain DID" />
         </ListItem>
-        <ListItem className={view === 9 ? classes.selected : classes.unselected} button key="off-chain-did-revoke" onClick={() => { dispatch(setView(9)) }}>
+        <ListItem className={view === 10 ? classes.selected : classes.unselected} button key="off-chain-did-revoke" onClick={() => { dispatch(setView(10)) }}>
           <ListItemText primary="Revoke off chain DID" />
         </ListItem>
       </List>

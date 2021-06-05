@@ -9,6 +9,7 @@ import resolveDidReducer from '../redux/resolveDIDSlice'
 import offResolver from '../redux/offResolverSlice'
 import offUpdater from '../redux/offUpdaterSlice'
 import offRevoker from '../redux/offRevokerSlice'
+import offCreator from '../redux/offCreatorSlice';
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +20,7 @@ export const store = configureStore({
     normalDID:normalDidReducer,
     hdDid:hdDidReducer,
     resolveDID: resolveDidReducer,
+    offCreator: offCreator,
     offResolve: offResolver,
     offUpdater: offUpdater,
     offRevoker: offRevoker
