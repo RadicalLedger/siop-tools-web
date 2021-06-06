@@ -38,7 +38,7 @@ export default function OCDIDCreator() {
 
     function generateDID() {
 
-        axios.post(`${process.env.REACT_APP_BACKEND}/did/${did}`).then((res:any) => {
+        axios.post(`${process.env.REACT_APP_BACKEND}/did/`).then((res:any) => {
             const {did, privateKey } = res.data
             dispatch(setDID(did))
             dispatch(setPrivateKey(privateKey))
