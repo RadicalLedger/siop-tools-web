@@ -28,10 +28,6 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-/**
- * HD wallet component
- * @return {React.ReactElement}
- */
 export default function OCDIDRevoker() {
 
     
@@ -63,7 +59,6 @@ export default function OCDIDRevoker() {
                       "jwt": res.data.challengeToken
                     }
                   }).then(res => {
-                    console.log(res.data)
                     dispatch(setDIDDocument(JSON.stringify(res.data.newResolution.didDocument)))
                     setIsRevoked(true)
                     setIsRevoking(false)

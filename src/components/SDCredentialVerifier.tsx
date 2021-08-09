@@ -61,7 +61,6 @@ export default function SDCredentialVerifier() {
     };
 
     function getDisclosedCredentials(presentation:any){
-        // console.log(presentation)
         const disclosedCredentials = []
         for(const credential of presentation['credentials']){
             const claims:any = {}
@@ -72,7 +71,6 @@ export default function SDCredentialVerifier() {
             }
             disclosedCredentials.push(claims)
         }
-        console.log(disclosedCredentials)
         return disclosedCredentials
     }
 

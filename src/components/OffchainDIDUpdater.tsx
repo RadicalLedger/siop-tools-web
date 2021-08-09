@@ -28,10 +28,6 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-/**
- * HD wallet component
- * @return {React.ReactElement}
- */
 export default function OCDIDUpdater() {
 
     const did = useSelector(_did)
@@ -67,7 +63,6 @@ export default function OCDIDUpdater() {
                         }
                     }).then(res => {
                         setIsUpdating(false)
-                        console.log(res.data.newResolution.didDocument)
                         dispatch(setDIDDocument(JSON.stringify(res.data.newResolution.didDocument)))
                         setIsUpdated(true)
                     }).catch(err => {

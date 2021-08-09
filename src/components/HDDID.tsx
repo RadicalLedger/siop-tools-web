@@ -97,7 +97,6 @@ export default function HDDID() {
 
         const mnemonic = generateMnemonic(strength)
         addMnemonics(mnemonic)
-        console.log(topMnemonics)
         const seed = getSeedFromMnemonic(mnemonic)
 
         dispatch(setMnemonic(mnemonic))

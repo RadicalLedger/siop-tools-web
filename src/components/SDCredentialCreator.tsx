@@ -73,7 +73,6 @@ export default function SDCredentialCreator() {
         const claims = zip(keyArray, valueArray)
         try {
             const vc = issue(claims, signerPrivateKey, holderPublicKey)
-            console.log(vc)
             dispatch(setVC(base64UrlEncode(JSON.stringify(vc))))
         } catch (e) {
             dispatch(setVC('Error!'))

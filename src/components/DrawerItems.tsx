@@ -22,7 +22,6 @@ export default function DrawerItems() {
   const classes = useStyles()
   const view = useSelector(_view)
   // const ctyp = useTypedSelector(state => state.views.ctyp)
-  console.log(process.env.REACT_APP_BACKEND)
 
   return (
     <div>

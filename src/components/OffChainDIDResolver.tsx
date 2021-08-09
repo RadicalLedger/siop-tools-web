@@ -23,10 +23,6 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-/**
- * HD wallet component
- * @return {React.ReactElement}
- */
 export default function OCDIDResolver() {
 
     const did = useSelector(_did)
@@ -44,7 +40,6 @@ export default function OCDIDResolver() {
             setIsValidDID(true)
             setIsResolving(true)
             axios.get(`${process.env.REACT_APP_BACKEND}/did/${did}`).then((res: any) => {
-                console.log(res.data)
                 dispatch(setDIDDocument(JSON.stringify(res.data.didDocument)))
                 setIsResolving(false)
             }).catch(err => {

@@ -35,7 +35,6 @@ export default function InputComponent(props: { index: number }) {
     }
 
     const handleValueInput = (value: string, index: number) => {
-        console.log(value, index)
         const newValueArray = [...valueArray]
         newValueArray[index] = value
         dispatch(setValueArray(newValueArray))
