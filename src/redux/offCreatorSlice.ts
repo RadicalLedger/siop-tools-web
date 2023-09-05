@@ -2,32 +2,31 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../app/store';
 
 interface OffCreatorState {
-  address:string;
-  did:string;
-  privateKey:string
+    address: string;
+    did: string;
+    privateKey: string;
 }
 
 const initialState: OffCreatorState = {
-  address:'',
-  did:'',
-  privateKey:''
+    address: '',
+    did: '',
+    privateKey: ''
 };
 
 export const offCreatorSlice = createSlice({
-  name: 'offCreator',
-  initialState,
-  reducers: {
-
-    setAddress: (state, action: PayloadAction<string>) => {
-      state.address = action.payload;
-    },
-    setDID: (state, action: PayloadAction<string>) => {
-      state.did = action.payload;
-    },
-    setPrivateKey: (state, action: PayloadAction<string>) => {
-      state.privateKey = action.payload;
+    name: 'offCreator',
+    initialState,
+    reducers: {
+        setAddress: (state, action: PayloadAction<string>) => {
+            state.address = action.payload;
+        },
+        setDID: (state, action: PayloadAction<string>) => {
+            state.did = action.payload;
+        },
+        setPrivateKey: (state, action: PayloadAction<string>) => {
+            state.privateKey = action.payload;
+        }
     }
-  },
 });
 
 export const { setAddress, setDID, setPrivateKey } = offCreatorSlice.actions;

@@ -14,8 +14,8 @@ interface HdDidState {
     childPublicKey: string;
     address: string;
     did: string;
-    validMnemonic:boolean;
-    validDerPath:boolean;
+    validMnemonic: boolean;
+    validDerPath: boolean;
     topMnemonics: string[];
 }
 
@@ -32,8 +32,8 @@ const initialState: HdDidState = {
     childPublicKey: '',
     address: '',
     did: '',
-    validMnemonic:false,
-    validDerPath:false,
+    validMnemonic: false,
+    validDerPath: false,
     topMnemonics: []
 };
 
@@ -85,11 +85,27 @@ export const hdDidSlice = createSlice({
         },
         setTopMnemonics: (state, action: PayloadAction<string[]>) => {
             state.topMnemonics = action.payload;
-        },
-    },
+        }
+    }
 });
 
-export const { setAddress, setDID, setChildChainCode, setChildPrivateKey, setChildPublicKey, setDerivationPath, setMasterChainCode, setMasterPrivateKey, setMasterPublicKey, setMnemonic, setSeed, setStrength, setMnemonicValidity, setDerPathValidity, setTopMnemonics } = hdDidSlice.actions;
+export const {
+    setAddress,
+    setDID,
+    setChildChainCode,
+    setChildPrivateKey,
+    setChildPublicKey,
+    setDerivationPath,
+    setMasterChainCode,
+    setMasterPrivateKey,
+    setMasterPublicKey,
+    setMnemonic,
+    setSeed,
+    setStrength,
+    setMnemonicValidity,
+    setDerPathValidity,
+    setTopMnemonics
+} = hdDidSlice.actions;
 
 export const _strength = (state: RootState) => state.hdDid.strength;
 export const _mnemonic = (state: RootState) => state.hdDid.mnemonic;

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Grid, TextField, Button } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import Title from './Title'
+import Title from './Title';
 import axios from 'axios';
 import { isAddress } from '../utils';
 
-import { useDispatch, useSelector } from 'react-redux'
-import { setDID, setDIDDocument, _did, _didDoc } from '../redux/offResolverSlice'
+import { useDispatch, useSelector } from 'react-redux';
+import { setDID, setDIDDocument, _did, _didDoc } from '../redux/offResolverSlice';
 import Spinner from './Spinner';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -14,50 +14,54 @@ const useStyles = makeStyles((theme: Theme) =>
         root: {
             width: '100%',
             '& > * + *': {
-                marginTop: theme.spacing(2),
-            },
+                marginTop: theme.spacing(2)
+            }
         },
         btn: {
             marginBottom: 10
         }
-    }),
+    })
 );
 
 export default function OCDIDResolver() {
-
-    const did = useSelector(_did)
-    const didDoc = useSelector(_didDoc)
-    const [isValidDID, setIsValidDID] = useState(true)
+    const did = useSelector(_did);
+    const didDoc = useSelector(_didDoc);
+    const [isValidDID, setIsValidDID] = useState(true);
     const classes = useStyles();
 
-    const [snackBarState, setState] = React.useState<{ open: boolean, text: string }>({ open: false, text: '' });
-    const [isResolving, setIsResolving] = useState(false)
+    const [snackBarState, setState] = React.useState<{ open: boolean; text: string }>({
+        open: false,
+        text: ''
+    });
+    const [isResolving, setIsResolving] = useState(false);
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     function getDID() {
         if (isAddress(did.split(':')[2])) {
-            setIsValidDID(true)
-            setIsResolving(true)
-            axios.get(`${process.env.REACT_APP_BACKEND}/did/${did}`).then((res: any) => {
-                dispatch(setDIDDocument(JSON.stringify(res.data.didDocument)))
-                setIsResolving(false)
-            }).catch(err => {
-                if (err.response && err.response.data.error) {
-                    dispatch(setDIDDocument(err.response.data.error))
-                } else {
-                    dispatch(setDIDDocument("Error"))
-                }
-                setIsResolving(false)
-            })
+            setIsValidDID(true);
+            setIsResolving(true);
+            axios
+                .get(`${process.env.REACT_APP_BACKEND}/did/${did}`)
+                .then((res: any) => {
+                    dispatch(setDIDDocument(JSON.stringify(res.data.didDocument)));
+                    setIsResolving(false);
+                })
+                .catch((err) => {
+                    if (err.response && err.response.data.error) {
+                        dispatch(setDIDDocument(err.response.data.error));
+                    } else {
+                        dispatch(setDIDDocument('Error'));
+                    }
+                    setIsResolving(false);
+                });
         } else {
-            setIsValidDID(false)
+            setIsValidDID(false);
         }
-
     }
 
     function handleDidInput(did: string): void {
-        dispatch(setDID(did))
+        dispatch(setDID(did));
     }
 
     function copyToClipboard(text: string) {
@@ -66,13 +70,12 @@ export default function OCDIDResolver() {
                 navigator.clipboard.writeText(text);
                 setState({
                     open: true,
-                    text: "Copied to clipboard"
+                    text: 'Copied to clipboard'
                 });
-
             } else {
                 setState({
                     open: true,
-                    text: "Clould not copied"
+                    text: 'Clould not copied'
                 });
             }
         }
@@ -80,11 +83,8 @@ export default function OCDIDResolver() {
 
     return (
         <Grid container spacing={3}>
-
             <Grid item xs={12}>
-                <Title>
-                    {'Resolve Offchain DID'}
-                </Title>
+                <Title>{'Resolve Offchain DID'}</Title>
             </Grid>
 
             <Grid item xs={12}>
@@ -98,12 +98,16 @@ export default function OCDIDResolver() {
                     value={did}
                     onChange={(e: any) => handleDidInput(e.target.value)}
                     error={!isValidDID}
-                    helperText={isValidDID ? "" : "Invalid DID"}
+                    helperText={isValidDID ? '' : 'Invalid DID'}
                 />
             </Grid>
 
             <Grid item xs={12}>
-                <Button className={classes.btn} onClick={getDID} variant="contained" color="primary">
+                <Button
+                    className={classes.btn}
+                    onClick={getDID}
+                    variant="contained"
+                    color="primary">
                     Resolve DID
                 </Button>
             </Grid>
@@ -117,13 +121,14 @@ export default function OCDIDResolver() {
                     multiline
                     value={didDoc}
                     InputProps={{
-                        readOnly: true,
+                        readOnly: true
                     }}
-                    onClick={() => { copyToClipboard(didDoc) }}
+                    onClick={() => {
+                        copyToClipboard(didDoc);
+                    }}
                 />
             </Grid>
             {isResolving && <Spinner />}
-
         </Grid>
-    )
+    );
 }

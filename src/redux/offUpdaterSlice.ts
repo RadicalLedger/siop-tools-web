@@ -19,7 +19,6 @@ export const offUpdaterSlice = createSlice({
     name: 'off-updater',
     initialState,
     reducers: {
-
         setDID: (state, action: PayloadAction<string>) => {
             state.did = action.payload;
         },
@@ -32,7 +31,7 @@ export const offUpdaterSlice = createSlice({
         setDIDDocument: (state, action: PayloadAction<string>) => {
             state.didDoc = action.payload;
         }
-    },
+    }
 });
 
 export const { setDID, setDIDDocument, setPrivateKey, setPublicKey } = offUpdaterSlice.actions;

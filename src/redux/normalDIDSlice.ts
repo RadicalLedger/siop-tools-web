@@ -2,32 +2,31 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../app/store';
 
 interface NormalDidState {
-  address:string;
-  did:string;
-  privateKey:string
+    address: string;
+    did: string;
+    privateKey: string;
 }
 
 const initialState: NormalDidState = {
-  address:'',
-  did:'',
-  privateKey:''
+    address: '',
+    did: '',
+    privateKey: ''
 };
 
 export const normalDidSlice = createSlice({
-  name: 'normalDID',
-  initialState,
-  reducers: {
-
-    setAddress: (state, action: PayloadAction<string>) => {
-      state.address = action.payload;
-    },
-    setDID: (state, action: PayloadAction<string>) => {
-      state.did = action.payload;
-    },
-    setPrivateKey: (state, action: PayloadAction<string>) => {
-      state.privateKey = action.payload;
+    name: 'normalDID',
+    initialState,
+    reducers: {
+        setAddress: (state, action: PayloadAction<string>) => {
+            state.address = action.payload;
+        },
+        setDID: (state, action: PayloadAction<string>) => {
+            state.did = action.payload;
+        },
+        setPrivateKey: (state, action: PayloadAction<string>) => {
+            state.privateKey = action.payload;
+        }
     }
-  },
 });
 
 export const { setAddress, setDID, setPrivateKey } = normalDidSlice.actions;

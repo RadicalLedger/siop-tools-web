@@ -4,18 +4,21 @@ import { Typography, makeStyles, createStyles, Theme } from '@material-ui/core';
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         title: {
-            color: "#303030"
+            color: '#303030'
         }
-    }),
+    })
 );
 
-export default function Title(props: { children: any }) {
+interface Props {
+    children?: any;
+}
 
-    const classes = useStyles()
+export default function Title({ children }: Props) {
+    const classes = useStyles();
 
     return (
         <Typography variant="h5" className={classes.title}>
-            {props.children}
+            {children}
         </Typography>
-    )
+    );
 }

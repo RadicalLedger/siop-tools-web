@@ -4,19 +4,18 @@ import { Typography, Box, makeStyles, createStyles, Theme } from '@material-ui/c
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         box: {
-            color: "#303030",
-            textJustify: "initial"
+            color: '#303030',
+            textJustify: 'initial'
         }
-    }),
+    })
 );
 
-export default function DescriptionBox(props:{description:string}) {
-
-    const classes = useStyles()
+export default function DescriptionBox(props: { description: string }) {
+    const classes = useStyles();
 
     return (
         <Box data-testid="descriptionBox" className={classes.box}>
             <Typography>{props.description}</Typography>
         </Box>
-    )
+    );
 }

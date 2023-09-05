@@ -1,8 +1,7 @@
 import React from 'react';
 import { TextField } from '@material-ui/core';
 
-export default function TextFieldNormal(props: { label: string, value: string }) {
-
+export default function TextFieldNormal(props: { label: string; value: string }) {
     return (
         <TextField
             id="standard-read-only-input"
@@ -11,8 +10,8 @@ export default function TextFieldNormal(props: { label: string, value: string })
             fullWidth
             value={props.value}
             InputProps={{
-                readOnly: true,
+                readOnly: true
             }}
         />
-    )
+    );
 }

@@ -1,83 +1,85 @@
-import React from 'react'
-import { Button, Fade, Grid, IconButton, List, Snackbar, TextField } from '@material-ui/core'
+import React from 'react';
+import { Button, Fade, Grid, IconButton, List, Snackbar, TextField } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux';
 
 import Title from './Title';
-import InputComponent from './InputComponent'
-import { issue, base64UrlEncode } from 'sd-vc-lib'
-import { _holderPublicKey, _inputComponentList, _signerPrivateKey, _signerPublicKey, setHolderPublicKey, setInputComponentList, setSignerPrivateKey, setSignerPublicKey, _keyArray, _valueArray, setVC, _vc, setKeyArray, setValueArray } from '../redux/issueSlice';
+import InputComponent from './InputComponent';
+import { verifiable } from 'sd-vc-lib';
+import documentLoader from '../utils/document-loader';
+import {
+    _holderPublicKey,
+    _inputComponentList,
+    _signerPrivateKey,
+    _signerPublicKey,
+    setHolderPublicKey,
+    setInputComponentList,
+    setSignerPrivateKey,
+    setSignerPublicKey,
+    _keyArray,
+    _valueArray,
+    setVC,
+    _vc,
+    setKeyArray,
+    setValueArray
+} from '../redux/issueSlice';
 import TextFieldWithCopy from './TextFieldWithCopy';
 // import {publicKeyCreate} from 'secp256k1'
 
-
 export default function SDCredentialCreator() {
+    const holderPublicKey = useSelector(_holderPublicKey);
+    const signerPrivateKey = useSelector(_signerPrivateKey);
+    const signerPublicKey = useSelector(_signerPublicKey);
+    const inputComponentList = useSelector(_inputComponentList);
+    const keyArray = useSelector(_keyArray);
+    const valueArray = useSelector(_valueArray);
+    const vc = useSelector(_vc);
+    const dispatch = useDispatch();
 
-    const holderPublicKey = useSelector(_holderPublicKey)
-    const signerPrivateKey = useSelector(_signerPrivateKey)
-    const signerPublicKey = useSelector(_signerPublicKey)
-    const inputComponentList = useSelector(_inputComponentList)
-    const keyArray = useSelector(_keyArray)
-    const valueArray = useSelector(_valueArray)
-    const vc = useSelector(_vc)
-    const dispatch = useDispatch()
-
-    const [snackBarState, setState] = React.useState<{open: boolean, text:string}>({open: false,text:''});
+    const [snackBarState, setState] = React.useState<{ open: boolean; text: string }>({
+        open: false,
+        text: ''
+    });
 
     function addNewInput() {
-        const i = inputComponentList.length
-        const newInputComponentList = [...inputComponentList]
-        const newKeyArray = [...keyArray, '']
-        const newValueArray = [...valueArray, '']
+        const i = inputComponentList.length;
+        const newInputComponentList = [...inputComponentList];
+        const newKeyArray = [...keyArray, ''];
+        const newValueArray = [...valueArray, ''];
         // keyArray.push('')
         // valueArray.push('')
-        dispatch(setKeyArray(newKeyArray))
-        dispatch(setValueArray(newValueArray))
-        newInputComponentList.push(i)
-        dispatch(setInputComponentList(newInputComponentList))
+        dispatch(setKeyArray(newKeyArray));
+        dispatch(setValueArray(newValueArray));
+        newInputComponentList.push(i);
+        dispatch(setInputComponentList(newInputComponentList));
     }
 
     function handlePublicKeyInput(publicKey: string) {
-        dispatch(setHolderPublicKey(publicKey))
+        dispatch(setHolderPublicKey(publicKey));
     }
 
     function handlePrivateKeyInput(privateKey: string) {
-        dispatch(setSignerPrivateKey(privateKey))
-        try {
-            const privateKeyBuffer = Uint8Array.from(Buffer.from(privateKey, 'hex'))
-            // const publicKeyBuffer = publicKeyCreate(privateKeyBuffer)
-            // const publicKey = Buffer.from(publicKeyBuffer).toString('hex')
-            // dispatch(setCreateSignerPubKey(publicKey))
-        } catch (error) {
-            // dispatch(setCreateSignerPubKey('Error!'))
-        }
+        dispatch(setSignerPrivateKey(privateKey));
     }
 
-    // async function generateRandomKeys() {
-    //     try{
-    //         const {privateKey} = createRandomETHDID()
-    //         const privateKeyBuffer = Uint8Array.from(Buffer.from(privateKey, 'hex'))
-    //         const publicKeyBuffer = publicKeyCreate(privateKeyBuffer)
-    //         const publicKey = Buffer.from(publicKeyBuffer).toString('hex')
-    //         dispatch(setCreateSignerPrvKey(privateKey))
-    //         dispatch(setCreateSignerPubKey(publicKey))
-    //     }catch{
-    //         dispatch(setCreateSignerPrvKey('Error!'))
-    //         dispatch(setCreateSignerPubKey('Error!'))
-    //     }
-    // }
-
-
     async function sign() {
-        const claims = zip(keyArray, valueArray)
-        try {
-            const vc = issue(claims, signerPrivateKey, holderPublicKey)
-            dispatch(setVC(base64UrlEncode(JSON.stringify(vc))))
-        } catch (e) {
-            dispatch(setVC('Error!'))
-        }
+        const credential = zip(keyArray, valueArray);
 
+        try {
+            const vc = await verifiable.credential.create({
+                credential,
+                holderPublicKey,
+                issuerPrivateKey: signerPrivateKey,
+                issuanceDate: credential?.issuanceDate || new Date().toISOString(),
+                documentLoader
+            });
+
+            dispatch(setVC(btoa(JSON.stringify(vc))));
+        } catch (e) {
+            console.log(e);
+            dispatch(setVC('Error!'));
+        }
     }
 
     function copyToClipboard(text: string) {
@@ -86,71 +88,77 @@ export default function SDCredentialCreator() {
                 navigator.clipboard.writeText(text);
                 setState({
                     open: true,
-                    text: "Copied to clipboard"
+                    text: 'Copied to clipboard'
                 });
-
             } else {
                 setState({
                     open: true,
-                    text: "Clould not copied"
+                    text: 'Clould not copied'
                 });
             }
-        }
-    }
-    
-    function callback(success:boolean){
-        if(success){
-            setState({
-                open: true,
-                text:"Copied to clipboard"
-            });
-        }else{
-            setState({
-                open: true,
-                text:"Clould not copied"
-            });
         }
     }
 
     function handleClose() {
         setState({
             ...snackBarState,
-            open: false,
+            open: false
         });
-    };
+    }
 
     function zip(arr1: any, arr2: any, out: any = {}) {
-        arr1.map((val: any, idx: any) => { out[val] = arr2[idx]; });
+        arr1.map((val: any, idx: any) => {
+            let value = arr2[idx];
+
+            if (isJson(value)) {
+                value = eval(`(${value})`);
+            }
+
+            out[val] = value;
+        });
+
         return out;
+    }
+
+    function isJson(str) {
+        try {
+            eval(`(${str})`);
+        } catch (error) {
+            return false;
+        }
+
+        return true;
     }
 
     return (
         <div>
             <Grid container spacing={3}>
-
                 <Grid item xs={12}>
-                    <Title>
-                        Create Selectively Disclosable Credentials
-                    </Title>
+                    <Title>Create Selectively Disclosable Credentials</Title>
                 </Grid>
 
                 <Grid item xs={12}>
                     <List>
                         {inputComponentList.map((i: number) => {
-                            return <InputComponent key={i} index={i} />
+                            return <InputComponent key={`sd-credential-input-${i}`} index={i} />;
                         })}
                     </List>
-
                 </Grid>
 
                 <Grid item xs={12}>
                     <Button
                         variant="contained"
                         color="primary"
-                        aria-label="add" onClick={addNewInput}
-                        disabled={keyArray[inputComponentList.length - 1] === '' || valueArray[inputComponentList.length - 1] === ''}
+                        aria-label="add"
+                        onClick={addNewInput}
+                        disabled={
+                            keyArray[inputComponentList.length - 1] === '' ||
+                            valueArray[inputComponentList.length - 1] === ''
+                        }
                         //TODO Add tooltip saying why this is disabled
-                    >Add more claims</Button>
+                    >
+                        Add more claims
+                    </Button>
                 </Grid>
 
                 <Grid item xs={12}>
@@ -177,10 +185,12 @@ export default function SDCredentialCreator() {
 
                 <Grid item xs={12}>
                     <Button
-                        color="primary" variant="contained"
+                        color="primary"
+                        variant="contained"
                         onClick={sign}
-                        disabled={holderPublicKey && signerPrivateKey ? false : true}
-                    >Sign</Button>
+                        disabled={holderPublicKey && signerPrivateKey ? false : true}>
+                        Sign
+                    </Button>
                 </Grid>
 
                 <Grid item xs={12}>
@@ -203,16 +213,11 @@ export default function SDCredentialCreator() {
                 autoHideDuration={5000}
             />
 
-
-
             {/* <Button
                 className={classes.elements}
                 color="primary" variant="outlined"
                 onClick={generateRandomKeys}
             >Generate Random Keys</Button> */}
-
-
-
 
             {/* <TextField
                 className={classes.elements}
@@ -222,7 +227,6 @@ export default function SDCredentialCreator() {
                 multiline
                 onClick={() => copyToClipboard(state.signerPublicKey)}
             /> */}
-
         </div>
-    )
+    );
 }
