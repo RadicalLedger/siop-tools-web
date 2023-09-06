@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import jwt from 'jsonwebtoken';
-import { ecdsaSign, publicKeyCreate } from 'secp256k1';
 import {
     Grid,
     TextField,
@@ -29,6 +28,9 @@ import Spinner from './Spinner';
 
 import { isAddress } from '../utils';
 import axios from 'axios';
+import Ed25519 from 'sd-vc-lib/dist/utils/ed25519';
+import Wallet, { Types } from 'did-hd-wallet';
+import { _publicKey, setPublicKey } from '../redux/offUpdaterSlice';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -47,6 +49,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function OCDIDRevoker() {
     const did = useSelector(_did);
     const privateKey = useSelector(_privateKey);
+    const publicKey = useSelector(_publicKey);
     const didDoc = useSelector(_didDoc);
     const [isValidDID, setIsValidDID] = useState(true);
     const [isRevoked, setIsRevoked] = useState(false);
@@ -56,62 +59,72 @@ export default function OCDIDRevoker() {
 
     const dispatch = useDispatch();
 
-    function handleRevokeDID(): void {
-        if (isAddress(did.split(':')[2])) {
-            setIsRevoking(true);
-            setIsValidDID(true);
+    async function handleRevokeDID() {
+        const ed = new Ed25519();
+        setIsRevoking(true);
+        setIsValidDID(true);
+
+        try {
+            const challengeResponse = await axios.patch(
+                `${process.env.REACT_APP_BACKEND}/did/${did}`
+            );
+            const { challenge: challenge } = jwt.decode(
+                challengeResponse.data.challengeToken
+            ) as any;
+
             axios
-                .patch(`${process.env.REACT_APP_BACKEND}/did/${did}`)
+                .patch(`${process.env.REACT_APP_BACKEND}/did/${did}`, {
+                    challengeResponse: {
+                        publicKey: publicKey,
+                        cipherText: ed
+                            .sign(
+                                Buffer.from(challenge, 'hex'),
+                                Buffer.from(privateKey as string, 'hex')
+                            )
+                            .toHex(),
+                        jwt: challengeResponse.data.challengeToken
+                    }
+                })
                 .then((res) => {
-                    const { challenge } = jwt.decode(res.data.challengeToken) as any;
-                    axios
-                        .patch(`${process.env.REACT_APP_BACKEND}/did/${did}`, {
-                            challengeResponse: {
-                                publicKey: Buffer.from(
-                                    publicKeyCreate(Buffer.from(privateKey, 'hex'))
-                                ).toString('hex'),
-                                cipherText: Buffer.from(
-                                    ecdsaSign(
-                                        Buffer.from(challenge, 'hex'),
-                                        Buffer.from(privateKey, 'hex')
-                                    ).signature
-                                ).toString('hex'),
-                                jwt: res.data.challengeToken
-                            }
-                        })
-                        .then((res) => {
-                            dispatch(
-                                setDIDDocument(JSON.stringify(res.data.newResolution.didDocument))
-                            );
-                            setIsRevoked(true);
-                            setIsRevoking(false);
-                        })
-                        .catch((err) => {
-                            if (err.response && err.response.data.error) {
-                                dispatch(setDIDDocument(err.response.data.error));
-                            } else {
-                                dispatch(setDIDDocument('Error'));
-                            }
-                            setIsRevoked(false);
-                            setIsRevoking(false);
-                        });
+                    dispatch(
+                        setDIDDocument(JSON.stringify(res.data.newResolution.didDocument, null, 4))
+                    );
+                    setIsRevoked(true);
+                    setIsRevoking(false);
                 })
                 .catch((err) => {
                     if (err.response && err.response.data.error) {
                         dispatch(setDIDDocument(err.response.data.error));
+                    } else if (err.error) {
+                        dispatch(setDIDDocument(err.error));
                     } else {
                         dispatch(setDIDDocument('Error'));
                     }
+
                     setIsRevoked(false);
                     setIsRevoking(false);
+                })
+                .finally(() => {
+                    setIsRevoking(false);
                 });
-        } else {
-            setIsValidDID(false);
+        } catch (err: any) {
+            console.log(err);
+            if (err.response && err.response.data.error) {
+                dispatch(setDIDDocument(err.response.data.error));
+            } else {
+                dispatch(setDIDDocument('Error'));
+            }
+            setIsRevoked(false);
+            setIsRevoking(false);
         }
     }
 
     function handlePrivateKeyInput(privateKey: string): void {
         dispatch(setPrivateKey(privateKey));
+    }
+
+    function handlePublicKeyInput(publicKey: string): void {
+        dispatch(setPublicKey(publicKey));
     }
 
     function handleDidInput(did: string): void {
@@ -152,6 +165,17 @@ export default function OCDIDRevoker() {
                     fullWidth
                     value={privateKey}
                     onChange={(e: any) => handlePrivateKeyInput(e.target.value)}
+                />
+            </Grid>
+
+            <Grid item xs={12}>
+                <TextField
+                    id="publicKey"
+                    label="Public Key"
+                    variant="outlined"
+                    fullWidth
+                    value={publicKey}
+                    onChange={(e: any) => handlePublicKeyInput(e.target.value)}
                 />
             </Grid>
 

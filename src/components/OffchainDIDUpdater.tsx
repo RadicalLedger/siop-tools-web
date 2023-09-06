@@ -22,6 +22,7 @@ import {
 
 import axios from 'axios';
 import { isAddress } from '../utils';
+import Ed25519 from 'sd-vc-lib/dist/utils/ed25519';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -50,64 +51,50 @@ export default function OCDIDUpdater() {
 
     const classes = useStyles();
 
-    function handleUpdateDID() {
+    async function handleUpdateDID() {
+        const ed = new Ed25519();
         setIsUpdating(true);
-        if (isAddress(did.split(':')[2])) {
-            setIsValidDID(true);
-            axios
-                .put(`${process.env.REACT_APP_BACKEND}/did/${did}`)
-                .then((res: any) => {
-                    const { challenge } = jwt.decode(res.data.challengeToken) as any;
-                    axios
-                        .put(`${process.env.REACT_APP_BACKEND}/did/${did}`, {
-                            challengeResponse: {
-                                publicKey: Buffer.from(
-                                    publicKeyCreate(Buffer.from(privateKey, 'hex'))
-                                ).toString('hex'),
-                                cipherText: Buffer.from(
-                                    ecdsaSign(
-                                        Buffer.from(challenge, 'hex'),
-                                        Buffer.from(privateKey, 'hex')
-                                    ).signature
-                                ).toString('hex'),
-                                jwt: res.data.challengeToken
-                            },
-                            authentication: {
-                                type: 'Secp256k1SignatureAuthentication2018',
-                                publicKey: publicKey
-                            }
-                        })
-                        .then((res) => {
-                            setIsUpdating(false);
-                            dispatch(
-                                setDIDDocument(JSON.stringify(res.data.newResolution.didDocument))
-                            );
-                            setIsUpdated(true);
-                        })
-                        .catch((err) => {
-                            console.log('err', err.response.data.error);
-                            setIsUpdating(false);
-                            setIsUpdated(false);
-                            if (err.response && err.response.data.error) {
-                                dispatch(setDIDDocument(err.response.data.error));
-                            } else {
-                                dispatch(setDIDDocument('Error'));
-                            }
-                        });
-                })
-                .catch((err) => {
-                    setIsUpdating(false);
-                    setIsUpdated(false);
-                    if (err.response && err.response.data.error) {
-                        dispatch(setDIDDocument(err.response.data.error));
-                    } else {
-                        dispatch(setDIDDocument('Error'));
-                    }
-                });
-        } else {
-            setIsValidDID(false);
-            dispatch(setDIDDocument(''));
-        }
+
+        const challengeResponse = await axios.patch(`${process.env.REACT_APP_BACKEND}/did/${did}`);
+        const { challenge: challenge } = jwt.decode(challengeResponse.data.challengeToken) as any;
+
+        axios
+            .put(`${process.env.REACT_APP_BACKEND}/did/${did}`, {
+                challengeResponse: {
+                    publicKey: publicKey,
+                    cipherText: ed
+                        .sign(
+                            Buffer.from(challenge, 'hex'),
+                            Buffer.from(privateKey as string, 'hex')
+                        )
+                        .toHex(),
+                    jwt: challengeResponse.data.challengeToken
+                },
+                authentication: {
+                    type: 'Ed25519VerificationKey2018',
+                    publicKeyBase58: publicKey
+                }
+            })
+            .then((res) => {
+                setIsValidDID(true);
+
+                dispatch(
+                    setDIDDocument(JSON.stringify(res.data.newResolution.didDocument, null, 4))
+                );
+                setIsUpdated(true);
+            })
+            .catch((err) => {
+                console.log('err', err.response.data.error);
+                setIsUpdated(false);
+                if (err.response && err.response.data.error) {
+                    dispatch(setDIDDocument(err.response.data.error));
+                } else {
+                    dispatch(setDIDDocument('Error'));
+                }
+            })
+            .finally(() => {
+                setIsUpdating(false);
+            });
     }
 
     function handleDidInput(did: string): void {
@@ -132,7 +119,7 @@ export default function OCDIDUpdater() {
                 <TextField
                     id="did"
                     label="DID"
-                    placeholder="did:ethr:0x0000000000000000000000000000000"
+                    placeholder="did:key:0000000000000000000000000000000"
                     variant="outlined"
                     fullWidth
                     value={did}

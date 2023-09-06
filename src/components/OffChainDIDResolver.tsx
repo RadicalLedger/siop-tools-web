@@ -38,26 +38,22 @@ export default function OCDIDResolver() {
     const dispatch = useDispatch();
 
     function getDID() {
-        if (isAddress(did.split(':')[2])) {
-            setIsValidDID(true);
-            setIsResolving(true);
-            axios
-                .get(`${process.env.REACT_APP_BACKEND}/did/${did}`)
-                .then((res: any) => {
-                    dispatch(setDIDDocument(JSON.stringify(res.data.didDocument)));
-                    setIsResolving(false);
-                })
-                .catch((err) => {
-                    if (err.response && err.response.data.error) {
-                        dispatch(setDIDDocument(err.response.data.error));
-                    } else {
-                        dispatch(setDIDDocument('Error'));
-                    }
-                    setIsResolving(false);
-                });
-        } else {
-            setIsValidDID(false);
-        }
+        setIsResolving(true);
+        axios
+            .get(`${process.env.REACT_APP_BACKEND}/did/${did}`)
+            .then((res: any) => {
+                setIsValidDID(true);
+                dispatch(setDIDDocument(JSON.stringify(res.data.didDocument, null, 4)));
+                setIsResolving(false);
+            })
+            .catch((err) => {
+                if (err.response && err.response.data.error) {
+                    dispatch(setDIDDocument(err.response.data.error));
+                } else {
+                    dispatch(setDIDDocument('Error'));
+                }
+                setIsResolving(false);
+            });
     }
 
     function handleDidInput(did: string): void {

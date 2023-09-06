@@ -20,10 +20,10 @@ import ResolveDID from './components/ResolveDID';
 import SDCredentialCreator from './components/SDCredentialCreator';
 import SDCredentialMasker from './components/SDCredentialMasker';
 import SDCredentialVerifier from './components/SDCredentialVerifier';
-// import OCDIDResolver from './components/OffChainDIDResolver';
-// import OCDIDUpdater from './components/OffchainDIDUpdater';
-// import OCDIDRevoker from './components/OffchainDIDRevoker';
-// import OCDIDCreator from './components/OffChainDIDCreator';
+import OCDIDCreator from './components/OffChainDIDCreator';
+import OCDIDResolver from './components/OffChainDIDResolver';
+import OCDIDUpdater from './components/OffchainDIDUpdater';
+import OCDIDRevoker from './components/OffchainDIDRevoker';
 
 const drawerWidth = 200;
 
@@ -111,16 +111,16 @@ function App() {
             currentView = <SDCredentialVerifier />;
             break;
         case 7:
-            // currentView = <OCDIDCreator />
+            currentView = <OCDIDCreator />;
             break;
         case 8:
-            // currentView = <OCDIDResolver />
+            currentView = <OCDIDResolver />;
             break;
         case 9:
-            // currentView = <OCDIDUpdater />
+            currentView = <OCDIDUpdater />;
             break;
         case 10:
-            // currentView = <OCDIDRevoker />
+            currentView = <OCDIDRevoker />;
             break;
         default:
             currentView = <Home />;

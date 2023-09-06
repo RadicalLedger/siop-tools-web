@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Grid, TextField, Button, Snackbar, Fade } from '@material-ui/core';
+import React from 'react';
+import { Grid, Button, Snackbar, Fade } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import Title from './Title';
 import axios from 'axios';
-import { isAddress } from '../utils';
+import jwt from 'jsonwebtoken';
 
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -14,9 +14,10 @@ import {
     _did,
     _privateKey
 } from '../redux/offCreatorSlice';
-import Spinner from './Spinner';
 import TextWithCopy from './TextFieldWithCopy';
 import DescriptionBox from './DescriptionBox';
+import Wallet, { generateMnemonic, Types } from 'did-hd-wallet';
+import Ed25519 from 'sd-vc-lib/dist/utils/ed25519';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -45,22 +46,43 @@ export default function OCDIDCreator() {
 
     const dispatch = useDispatch();
 
-    function generateDID() {
-        axios
-            .post(`${process.env.REACT_APP_BACKEND}/did/`)
-            .then((res: any) => {
-                const { did, privateKey } = res.data;
-                dispatch(setDID(did));
-                dispatch(setPrivateKey(privateKey));
-                dispatch(setAddress(did.split(':')[2]));
-            })
-            .catch((err) => {
-                console.log(err);
-                const error = 'Error. Please try again later';
-                dispatch(setDID(error));
-                dispatch(setPrivateKey(error));
-                dispatch(setAddress(error));
-            });
+    async function generateDID() {
+        const ed = new Ed25519();
+        const mnemonic = generateMnemonic(128);
+
+        const wallet = new Wallet(Types.MNEMONIC, mnemonic);
+        const { did, privateKey, publicKey, verificationKey, address } =
+            await wallet.getMasterKeys();
+
+        const challengeResponse = await axios.post(`${process.env.REACT_APP_BACKEND}/did/`, {
+            did: did
+        });
+        const { challenge: challenge } = jwt.decode(challengeResponse.data.challengeToken) as any;
+
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND}/did/`, {
+            did: did,
+            verificationKey: verificationKey,
+            challengeResponse: {
+                publicKey: publicKey,
+                cipherText: ed
+                    .sign(Buffer.from(challenge, 'hex'), Buffer.from(privateKey as string, 'hex'))
+                    .toHex(),
+                jwt: challengeResponse.data.challengeToken
+            }
+        });
+
+        if (!response?.data?.did && response?.data?.status !== 'success') {
+            console.log(response);
+            const error = 'Error. Please try again later';
+            dispatch(setDID(error));
+            dispatch(setPrivateKey(error));
+            dispatch(setAddress(error));
+            return;
+        }
+
+        dispatch(setDID(did));
+        dispatch(setPrivateKey(privateKey as string));
+        dispatch(setAddress(address));
     }
 
     function handleClose() {

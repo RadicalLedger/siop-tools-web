@@ -13,7 +13,7 @@ export function isAddress(address: string) {
     }
 }
 
-export function isChecksumAddress(address: string) {
+function isChecksumAddress(address: string) {
     // Check each case
     address = address.replace('0x', '');
     const addressHash: string = keccak256(address.toLowerCase()).toString('hex');

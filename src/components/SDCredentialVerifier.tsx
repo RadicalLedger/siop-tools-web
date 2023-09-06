@@ -1,8 +1,8 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import { Button, Fade, Grid, Snackbar, TextField } from '@material-ui/core';
 //@ts-ignore
 import JSONFormat from 'json-format';
+import _ from 'lodash';
 
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -54,10 +54,11 @@ export default function SDCredentialVerifier() {
             const result = await verifiable.presentation.verify({
                 vp,
                 holderPublicKey,
+                issuerPublicKey: signerPublicKey,
                 documentLoader
             });
 
-            if (!result?.result) throw new Error();
+            if (!result?.verified) throw new Error();
 
             dispatch(setVerified('Presentation Verified'));
             // dispatch(setPresentation(vp))
@@ -75,21 +76,55 @@ export default function SDCredentialVerifier() {
         });
     }
 
+    function checkCredential(mask = {}, credentials = {}) {
+        if (_.isArray(credentials)) {
+            let claims: any = [];
+
+            for (let key = 0; key < credentials.length; key++) {
+                if (_.isObject(mask?.[key]) && _.isObject(credentials?.[key])) {
+                    claims.push(checkCredential(mask[key], credentials[key]));
+                    continue;
+                }
+
+                if (!mask?.[key]) {
+                    claims.push(credentials[key]);
+                    continue;
+                }
+            }
+
+            return claims;
+        }
+        if (_.isObject(credentials)) {
+            let claims: any = {};
+
+            for (let key in credentials) {
+                if (_.isObject(mask?.[key]) && _.isObject(credentials?.[key])) {
+                    claims[key] = checkCredential(mask[key], credentials[key]);
+                    continue;
+                }
+
+                if (!mask?.[key]) {
+                    claims[key] = credentials[key];
+                    continue;
+                }
+            }
+
+            return claims;
+        }
+    }
+
     function getDisclosedCredentials(presentation: any) {
         const disclosedCredentials: any = [];
 
         for (const credential of presentation['verifiableCredential']) {
-            const claims: any = {};
-            const mask = credential['credentialSubject']['selectiveDisclosureMetaData']['mask'];
-
-            for (const item of Object.keys(credential['credentialSubject'])) {
-                if (mask[item] === true) continue;
-
-                claims[item] = credential['claims'][item];
-            }
+            const mask =
+                credential['credentialSubject']?.['selectiveDisclosureMetaData']?.['mask'] || {};
+            const credentials = credential['credentialSubject'] || {};
+            const claims: any = checkCredential(mask, credentials);
 
             disclosedCredentials.push(claims);
         }
+
         return disclosedCredentials;
     }
 
