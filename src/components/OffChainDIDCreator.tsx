@@ -10,9 +10,11 @@ import {
     setAddress,
     setDID,
     setPrivateKey,
+    setPublicKey,
     _address,
     _did,
-    _privateKey
+    _privateKey,
+    _publicKey
 } from '../redux/offCreatorSlice';
 import TextWithCopy from './TextFieldWithCopy';
 import DescriptionBox from './DescriptionBox';
@@ -36,6 +38,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function OCDIDCreator() {
     const did = useSelector(_did);
     const privateKey = useSelector(_privateKey);
+    const publicKey = useSelector(_publicKey);
     const address = useSelector(_address);
     const classes = useStyles();
 
@@ -76,12 +79,14 @@ export default function OCDIDCreator() {
             const error = 'Error. Please try again later';
             dispatch(setDID(error));
             dispatch(setPrivateKey(error));
+            dispatch(setPublicKey(error));
             dispatch(setAddress(error));
             return;
         }
 
         dispatch(setDID(did));
         dispatch(setPrivateKey(privateKey as string));
+        dispatch(setPublicKey(publicKey as string));
         dispatch(setAddress(address));
     }
 
@@ -137,6 +142,10 @@ export default function OCDIDCreator() {
 
                 <Grid item xs={12}>
                     <TextWithCopy label="Private key" value={privateKey} callback={callback} />
+                </Grid>
+
+                <Grid item xs={12}>
+                    <TextWithCopy label="Public key" value={publicKey} callback={callback} />
                 </Grid>
 
                 <Grid item xs={12}>

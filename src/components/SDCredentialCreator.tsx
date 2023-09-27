@@ -1,41 +1,73 @@
 import React from 'react';
-import { Button, Fade, Grid, IconButton, List, Snackbar, TextField } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-
-import { useDispatch, useSelector } from 'react-redux';
+import {
+    Button,
+    Fade,
+    FormControl,
+    FormControlLabel,
+    Grid,
+    IconButton,
+    List,
+    Radio,
+    RadioGroup,
+    Snackbar,
+    TextField,
+    Theme,
+    createStyles,
+    makeStyles
+} from '@material-ui/core';
 
 import Title from './Title';
 import InputComponent from './InputComponent';
 import { verifiable } from 'sd-vc-lib';
 import documentLoader from '../utils/document-loader';
+import { Alert } from '@material-ui/lab';
+import base58 from 'base-58';
+
+import { useDispatch, useSelector } from 'react-redux';
 import {
-    _holderPublicKey,
-    _inputComponentList,
-    _signerPrivateKey,
-    _signerPublicKey,
     setHolderPublicKey,
     setInputComponentList,
     setSignerPrivateKey,
     setSignerPublicKey,
+    setPublicKeyEncoding,
+    setVC,
+    setKeyArray,
+    setValueArray,
+    _holderPublicKey,
+    _inputComponentList,
+    _signerPrivateKey,
+    _signerPublicKey,
     _keyArray,
     _valueArray,
-    setVC,
     _vc,
-    setKeyArray,
-    setValueArray
+    _publicKeyEncoding
 } from '../redux/issueSlice';
-import TextFieldWithCopy from './TextFieldWithCopy';
-// import {publicKeyCreate} from 'secp256k1'
+
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        root: {
+            width: '100%',
+            '& > * + *': {
+                marginTop: theme.spacing(2)
+            }
+        },
+        btn: {
+            marginBottom: 10
+        }
+    })
+);
 
 export default function SDCredentialCreator() {
     const holderPublicKey = useSelector(_holderPublicKey);
     const signerPrivateKey = useSelector(_signerPrivateKey);
+    const publicKeyEncoding = useSelector(_publicKeyEncoding);
     const signerPublicKey = useSelector(_signerPublicKey);
     const inputComponentList = useSelector(_inputComponentList);
     const keyArray = useSelector(_keyArray);
     const valueArray = useSelector(_valueArray);
     const vc = useSelector(_vc);
     const dispatch = useDispatch();
+    const classes = useStyles();
 
     const [snackBarState, setState] = React.useState<{ open: boolean; text: string }>({
         open: false,
@@ -63,13 +95,22 @@ export default function SDCredentialCreator() {
         dispatch(setSignerPrivateKey(privateKey));
     }
 
+    function handlePublicKeyEncoding(encoding: string) {
+        dispatch(setPublicKeyEncoding(encoding));
+    }
+
     async function sign() {
         const credential = zip(keyArray, valueArray);
+        let publicKey = holderPublicKey;
+
+        /* base58 to base64 */
+        if (publicKeyEncoding === 'Base58')
+            publicKey = Buffer.from(base58.decode(holderPublicKey)).toString('hex');
 
         try {
             const vc = await verifiable.credential.create({
                 credential,
-                holderPublicKey,
+                holderPublicKey: publicKey,
                 issuerPrivateKey: signerPrivateKey,
                 issuanceDate: credential?.issuanceDate || new Date().toISOString(),
                 documentLoader
@@ -159,6 +200,34 @@ export default function SDCredentialCreator() {
                     >
                         Add more claims
                     </Button>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <div className={classes.root}>
+                        <Alert severity="info">Select the public key encoding scheme</Alert>
+                    </div>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <FormControl component="fieldset">
+                        <RadioGroup
+                            row
+                            aria-label="encoding-scheme"
+                            name="encoding-scheme"
+                            value={publicKeyEncoding.toString()}
+                            onChange={(e) => handlePublicKeyEncoding(e.target.value)}>
+                            <FormControlLabel
+                                value="Base58"
+                                control={<Radio />}
+                                label="Base58 String"
+                            />
+                            <FormControlLabel
+                                value="Base64"
+                                control={<Radio />}
+                                label="Base64 String"
+                            />
+                        </RadioGroup>
+                    </FormControl>
                 </Grid>
 
                 <Grid item xs={12}>

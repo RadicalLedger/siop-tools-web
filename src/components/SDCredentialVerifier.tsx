@@ -1,5 +1,18 @@
 import React from 'react';
-import { Button, Fade, Grid, Snackbar, TextField } from '@material-ui/core';
+import {
+    Button,
+    Fade,
+    Grid,
+    Snackbar,
+    TextField,
+    Theme,
+    makeStyles,
+    createStyles,
+    FormControl,
+    RadioGroup,
+    FormControlLabel,
+    Radio
+} from '@material-ui/core';
 //@ts-ignore
 import JSONFormat from 'json-format';
 import _ from 'lodash';
@@ -8,23 +21,46 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     setHolderPublicKey,
     setPresentation,
+    setPublicKeyEncoding,
+    setSignerPublicKey,
+    setSignerPublicKeyEncoding,
+    setVerified,
     _holderPublicKey,
     _presentation,
     _signerPublicKey,
-    setSignerPublicKey,
-    setVerified,
-    _verified
+    _verified,
+    _publicKeyEncoding,
+    _signerPublicKeyEncoding
 } from '../redux/verifySlice';
 
 import Title from './Title';
 import { verifiable } from 'sd-vc-lib';
 import documentLoader from '../utils/document-loader';
+import { Alert } from '@material-ui/lab';
+import base58 from 'base-58';
+
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        root: {
+            width: '100%',
+            '& > * + *': {
+                marginTop: theme.spacing(2)
+            }
+        },
+        btn: {
+            marginBottom: 10
+        }
+    })
+);
 
 export default function SDCredentialVerifier() {
     const presentation = useSelector(_presentation);
     const signerPublicKey = useSelector(_signerPublicKey);
     const holderPublicKey = useSelector(_holderPublicKey);
     const verified = useSelector(_verified);
+    const publicKeyEncoding = useSelector(_publicKeyEncoding);
+    const signerPublicKeyEncoding = useSelector(_signerPublicKeyEncoding);
+    const classes = useStyles();
 
     const dispatch = useDispatch();
 
@@ -47,14 +83,30 @@ export default function SDCredentialVerifier() {
         dispatch(setPresentation(presentation));
     }
 
+    function handlePublicKeyEncoding(encoding: string) {
+        dispatch(setPublicKeyEncoding(encoding));
+    }
+
+    function handleSignerPublicKeyEncoding(encoding: string) {
+        dispatch(setSignerPublicKeyEncoding(encoding));
+    }
+
     async function verifyPresentation() {
         try {
             const vp = JSON.parse(atob(presentation));
+            let publicKey = holderPublicKey;
+            let issuerPublicKey = signerPublicKey;
+
+            /* base58 to base64 */
+            if (publicKeyEncoding === 'Base58')
+                publicKey = Buffer.from(base58.decode(holderPublicKey)).toString('hex');
+            if (signerPublicKeyEncoding === 'Base58')
+                issuerPublicKey = Buffer.from(base58.decode(signerPublicKey)).toString('hex');
 
             const result = await verifiable.presentation.verify({
                 vp,
-                holderPublicKey,
-                issuerPublicKey: signerPublicKey,
+                holderPublicKey: publicKey,
+                issuerPublicKey,
                 documentLoader
             });
 
@@ -147,6 +199,34 @@ export default function SDCredentialVerifier() {
                 </Grid>
 
                 <Grid item xs={12}>
+                    <div className={classes.root}>
+                        <Alert severity="info">Select the public key encoding scheme</Alert>
+                    </div>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <FormControl component="fieldset">
+                        <RadioGroup
+                            row
+                            aria-label="encoding-scheme"
+                            name="encoding-scheme"
+                            value={publicKeyEncoding.toString()}
+                            onChange={(e) => handlePublicKeyEncoding(e.target.value)}>
+                            <FormControlLabel
+                                value="Base58"
+                                control={<Radio />}
+                                label="Base58 String"
+                            />
+                            <FormControlLabel
+                                value="Base64"
+                                control={<Radio />}
+                                label="Base64 String"
+                            />
+                        </RadioGroup>
+                    </FormControl>
+                </Grid>
+
+                <Grid item xs={12}>
                     <TextField
                         value={holderPublicKey}
                         onChange={(e: any) => handleHolderPublicKeyInput(e.target.value)}
@@ -155,6 +235,28 @@ export default function SDCredentialVerifier() {
                         multiline
                         fullWidth
                     />
+                </Grid>
+
+                <Grid item xs={12}>
+                    <FormControl component="fieldset">
+                        <RadioGroup
+                            row
+                            aria-label="encoding-scheme"
+                            name="encoding-scheme"
+                            value={publicKeyEncoding.toString()}
+                            onChange={(e) => handleSignerPublicKeyEncoding(e.target.value)}>
+                            <FormControlLabel
+                                value="Base58"
+                                control={<Radio />}
+                                label="Base58 String"
+                            />
+                            <FormControlLabel
+                                value="Base64"
+                                control={<Radio />}
+                                label="Base64 String"
+                            />
+                        </RadioGroup>
+                    </FormControl>
                 </Grid>
 
                 <Grid item xs={12}>

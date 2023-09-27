@@ -6,13 +6,17 @@ interface VerifyState {
     signerPublicKey: string;
     presentation: string;
     verified: string;
+    publicKeyEncoding: string;
+    signerPublicKeyEncoding: string;
 }
 
 const initialState: VerifyState = {
     holderPublicKey: '',
     signerPublicKey: '',
     presentation: '',
-    verified: ''
+    verified: '',
+    publicKeyEncoding: 'Base58',
+    signerPublicKeyEncoding: 'Base58'
 };
 
 export const verifySlice = createSlice({
@@ -30,16 +34,30 @@ export const verifySlice = createSlice({
         },
         setVerified: (state, action: PayloadAction<string>) => {
             state.verified = action.payload;
+        },
+        setPublicKeyEncoding: (state, action: PayloadAction<string>) => {
+            state.publicKeyEncoding = action.payload;
+        },
+        setSignerPublicKeyEncoding: (state, action: PayloadAction<string>) => {
+            state.signerPublicKeyEncoding = action.payload;
         }
     }
 });
 
-export const { setHolderPublicKey, setPresentation, setSignerPublicKey, setVerified } =
-    verifySlice.actions;
+export const {
+    setHolderPublicKey,
+    setPresentation,
+    setSignerPublicKey,
+    setVerified,
+    setPublicKeyEncoding,
+    setSignerPublicKeyEncoding
+} = verifySlice.actions;
 
 export const _holderPublicKey = (state: RootState) => state.verify.holderPublicKey;
 export const _signerPublicKey = (state: RootState) => state.verify.signerPublicKey;
 export const _presentation = (state: RootState) => state.verify.presentation;
 export const _verified = (state: RootState) => state.verify.verified;
+export const _publicKeyEncoding = (state: RootState) => state.verify.publicKeyEncoding;
+export const _signerPublicKeyEncoding = (state: RootState) => state.verify.signerPublicKeyEncoding;
 
 export default verifySlice.reducer;

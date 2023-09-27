@@ -9,6 +9,7 @@ interface IssueState {
     valueArray: string[];
     inputComponentList: number[];
     vc: string;
+    publicKeyEncoding: string;
 }
 
 const initialState: IssueState = {
@@ -18,7 +19,8 @@ const initialState: IssueState = {
     keyArray: [''],
     valueArray: [''],
     inputComponentList: [0],
-    vc: ''
+    vc: '',
+    publicKeyEncoding: 'Base58'
 };
 
 export const issueSlice = createSlice({
@@ -45,6 +47,9 @@ export const issueSlice = createSlice({
         },
         setVC: (state, action: PayloadAction<string>) => {
             state.vc = action.payload;
+        },
+        setPublicKeyEncoding: (state, action: PayloadAction<string>) => {
+            state.publicKeyEncoding = action.payload;
         }
     }
 });
@@ -56,7 +61,8 @@ export const {
     setSignerPublicKey,
     setKeyArray,
     setValueArray,
-    setVC
+    setVC,
+    setPublicKeyEncoding
 } = issueSlice.actions;
 
 export const _holderPublicKey = (state: RootState) => state.issue.holderPublicKey;
@@ -66,5 +72,6 @@ export const _keyArray = (state: RootState) => state.issue.keyArray;
 export const _valueArray = (state: RootState) => state.issue.valueArray;
 export const _inputComponentList = (state: RootState) => state.issue.inputComponentList;
 export const _vc = (state: RootState) => state.issue.vc;
+export const _publicKeyEncoding = (state: RootState) => state.issue.publicKeyEncoding;
 
 export default issueSlice.reducer;
