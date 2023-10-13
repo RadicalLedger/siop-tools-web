@@ -13,14 +13,21 @@ interface IssueState {
 }
 
 const initialState: IssueState = {
-    holderPublicKey: '',
-    signerPrivateKey: '',
+    holderPublicKey: 'c2196d230267c18d101e51cb34d318e375f2100c268f2ffd6e9baef1d905a058',
+    signerPrivateKey: 'ed710c0f8812e360dafa4dd2888b7ff24d2401223daf961e7e78988a56fa24a4',
     signerPublicKey: '',
-    keyArray: [''],
-    valueArray: [''],
-    inputComponentList: [0],
+    keyArray: ['@context', 'id', 'issuanceDate', 'type', 'issuer', 'credentialSubject'],
+    valueArray: [
+        `['https://www.w3.org/2018/credentials/v1','https://d202eicx1ap3m7.cloudfront.net/credentials/microrewards/v0-01/siop-tools-schema-v0-01.json']`,
+        'http://localhost:8080/verify/1',
+        new Date().toISOString(),
+        `['VerifiableCredential']`,
+        'did:key:z6Mkoqgh9AppS2s28onvE4Qy9jwDBJ8ZqRdBtoWLSsRL57Jj',
+        `{"type":['DemoCredential'],"customAttribute":[]}`
+    ],
+    inputComponentList: [0, 1, 2, 3, 4, 5],
     vc: '',
-    publicKeyEncoding: 'Base58'
+    publicKeyEncoding: 'Base64'
 };
 
 export const issueSlice = createSlice({

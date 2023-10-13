@@ -15,7 +15,8 @@ import {
 const useStyles = makeStyles({
     elements: {
         marginLeft: 3,
-        marginRight: 3
+        marginRight: 3,
+        marginBottom: 5
     },
     secondaryWrapper: {
         display: 'flex',

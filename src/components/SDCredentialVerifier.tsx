@@ -114,9 +114,9 @@ export default function SDCredentialVerifier() {
 
             dispatch(setVerified('Presentation Verified'));
             // dispatch(setPresentation(vp))
-        } catch (e) {
+        } catch (e: any) {
             console.log(e);
-            dispatch(setVerified('Invalid inputs'));
+            dispatch(setVerified(e?.message || 'Invalid inputs'));
             // dispatch(setPresentation(''))
         }
     }
@@ -241,9 +241,9 @@ export default function SDCredentialVerifier() {
                     <FormControl component="fieldset">
                         <RadioGroup
                             row
-                            aria-label="encoding-scheme"
-                            name="encoding-scheme"
-                            value={publicKeyEncoding.toString()}
+                            aria-label="signer-encoding-scheme"
+                            name="signer-encoding-scheme"
+                            value={signerPublicKeyEncoding.toString()}
                             onChange={(e) => handleSignerPublicKeyEncoding(e.target.value)}>
                             <FormControlLabel
                                 value="Base58"

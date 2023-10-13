@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
             }
         },
         btn: {
-            marginBottom: 10
+            marginRight: 10
         }
     })
 );
@@ -68,6 +68,8 @@ export default function SDCredentialCreator() {
     const vc = useSelector(_vc);
     const dispatch = useDispatch();
     const classes = useStyles();
+
+    const customAttributeRef = React.useRef<{ value?: string }>({});
 
     const [snackBarState, setState] = React.useState<{ open: boolean; text: string }>({
         open: false,
@@ -85,6 +87,48 @@ export default function SDCredentialCreator() {
         dispatch(setValueArray(newValueArray));
         newInputComponentList.push(i);
         dispatch(setInputComponentList(newInputComponentList));
+    }
+
+    function replacer(key, value) {
+        if (typeof value === 'string') {
+            return value.replace(/"/g, '').replace(/,/g, ', ').replace(/:/g, ':');
+        } else {
+            return value;
+        }
+    }
+
+    function addNewCustomAttribute() {
+        let i: number | null = null;
+        const newKeyArray = [...keyArray];
+        const newValueArray = [...valueArray];
+
+        let idx = newKeyArray.findIndex((_) => _ === 'credentialSubject');
+        if (idx < 0) {
+            i = inputComponentList.length;
+            idx = i;
+            const newInputComponentList = [...inputComponentList];
+            newInputComponentList.push(i);
+
+            newKeyArray.push('credentialSubject');
+            newValueArray.push(`{}`);
+        }
+
+        let data = isJson(newValueArray[idx]) ? eval(`(${newValueArray[idx]})`) : {};
+        let value = customAttributeRef.current.value;
+
+        if (!data.customAttribute) {
+            data['customAttribute'] = [];
+        }
+
+        if (isJson(value)) {
+            value = eval(`(${value})`);
+        }
+
+        data.customAttribute.push(value);
+
+        newValueArray[idx] = JSON.stringify(data, replacer);
+
+        dispatch(setValueArray(newValueArray));
     }
 
     function handlePublicKeyInput(publicKey: string) {
@@ -199,6 +243,27 @@ export default function SDCredentialCreator() {
                         //TODO Add tooltip saying why this is disabled
                     >
                         Add more claims
+                    </Button>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <List>
+                        <TextField
+                            inputRef={customAttributeRef}
+                            placeholder="Custom Attribute Value"
+                            variant="outlined"
+                            fullWidth
+                        />
+                    </List>
+                </Grid>
+
+                <Grid item xs={12}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        aria-label="add"
+                        onClick={addNewCustomAttribute}>
+                        Add Custom Attribute
                     </Button>
                 </Grid>
 
