@@ -42,6 +42,7 @@ import {
     _vc,
     _publicKeyEncoding
 } from '../redux/issueSlice';
+import JsonForm from './json-form';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -223,11 +224,12 @@ export default function SDCredentialCreator() {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <List>
+                    <JsonForm />
+                    {/* <List>
                         {inputComponentList.map((i: number) => {
                             return <InputComponent key={`sd-credential-input-${i}`} index={i} />;
                         })}
-                    </List>
+                    </List> */}
                 </Grid>
 
                 <Grid item xs={12}>
