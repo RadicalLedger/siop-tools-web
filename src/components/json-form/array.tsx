@@ -6,7 +6,7 @@ import { uniqueId } from 'lodash';
 import AddOption from './add-option';
 import RemoveOption from './remove-option';
 
-export default function ArrayItem({ name }) {
+export default function ArrayItem({ name, data_type, ...props }: JsonFormItemProps) {
     const helper: any = React.useRef(null);
 
     const getValues = (obj, str) => {
@@ -15,8 +15,8 @@ export default function ArrayItem({ name }) {
         return eval(`obj${split.map((_) => `['${_}']`).join('')}`);
     };
 
-    const onAdd = () => {
-        if (helper.current) helper.current.push({ key: uniqueId(), type: 'object', data: {} });
+    const onAdd = (dt) => {
+        if (helper.current) helper.current.push({ id: uniqueId(), type: dt, data: '' });
     };
 
     const onRemove = (index: number) => {
@@ -39,13 +39,17 @@ export default function ArrayItem({ name }) {
                     return data?.length === 0 ? (
                         <span className="empty-records">No records yet</span>
                     ) : (
-                        data.map((item: any, index: number) => {
-                            if (!item.type) item.type = 'text';
+                        data.map(({ id, ...child_props }: any, index: number) => {
+                            let item_name = `${name}.${index}`;
+                            if (!child_props.type) child_props.type = 'text';
+                            if (child_props.type === 'text') item_name = `${item_name}.data`;
 
                             return (
-                                <div className="item-wrap" key={item.key || uniqueId()}>
-                                    <InputItem type={item.type} name={`${name}.${index}.data`} />
-                                    <RemoveOption onClick={() => onRemove(index)} />
+                                <div className="item-wrap" key={id || `${name}-${index}`}>
+                                    <InputItem name={item_name} {...child_props} />
+                                    {props.remove && (
+                                        <RemoveOption onClick={() => onRemove(index)} />
+                                    )}
                                 </div>
                             );
                         })
@@ -53,9 +57,11 @@ export default function ArrayItem({ name }) {
                 }}
             />
 
-            <div className="buttons">
-                <AddOption onClick={onAdd} />
-            </div>
+            {props.add && (
+                <div className="buttons">
+                    <AddOption onClick={() => onAdd(data_type)} />
+                </div>
+            )}
         </div>
     );
 }

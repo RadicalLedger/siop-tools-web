@@ -3,14 +3,12 @@ import ArrayItem from './array';
 import TextItem from './text';
 import ObjectItem from './object';
 
-interface Props {
-    type: 'array' | 'object' | 'text';
-    name: string;
-    [x: symbol | string]: any;
-}
+export default function InputItem({ type, ...props }: JsonFormInputItemProps) {
+    if (!props.data_type) props.data_type = 'text';
 
-export default function InputItem({ type, ...props }: Props) {
-    if (type === 'array') {
+    if (type === 'array' || type === 'object-array') {
+        if (type === 'object-array') props.data_type = 'object';
+
         return <ArrayItem {...props} />;
     }
 

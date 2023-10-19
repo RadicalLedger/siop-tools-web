@@ -17,5 +17,5 @@ export default function TextItem({ name, className = '', ...props }) {
         config.helperText = meta.error;
     }
 
-    return <TextField variant="outlined" {...config} />;
+    return <TextField size="small" variant="outlined" autoComplete={false} {...config} />;
 }
