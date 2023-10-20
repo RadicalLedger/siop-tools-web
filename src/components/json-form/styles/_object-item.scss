@@ -1,6 +1,10 @@
 .object-item {
-    gap: 15px;
     width: 100%;
-    display: grid;
-    grid-template-columns: 30% auto;
+
+    .items-wrap {
+        gap: 15px;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 30% auto;
+    }
 }

@@ -1,7 +1,7 @@
 type JsonFormDataTypes = 'array' | 'object' | 'text' | 'object-array';
 
 interface JsonFormItemProps {
-    data_options?: JsonFormInputItemOptionsProps;
+    data_type?: JsonFormDataTypes;
     name: string;
     add?: boolean;
     remove?: boolean;
@@ -10,8 +10,4 @@ interface JsonFormItemProps {
 
 interface JsonFormInputItemProps extends JsonFormItemProps {
     type: JsonFormDataTypes;
-}
-
-interface JsonFormInputItemOptionsProps extends JsonFormInputItemProps {
-    name?: string;
 }

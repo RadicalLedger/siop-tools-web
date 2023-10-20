@@ -6,7 +6,7 @@ import { uniqueId } from 'lodash';
 import AddOption from './add-option';
 import RemoveOption from './remove-option';
 
-export default function ArrayItem({ name, data_options, ...props }: JsonFormItemProps) {
+export default function ArrayItem({ name, data_type, ...props }: JsonFormItemProps) {
     const helper: any = React.useRef(null);
 
     const getValues = (obj, str) => {
@@ -15,8 +15,8 @@ export default function ArrayItem({ name, data_options, ...props }: JsonFormItem
         return eval(`obj${split.map((_) => `['${_}']`).join('')}`);
     };
 
-    const onAdd = () => {
-        if (helper.current) helper.current.push({ id: uniqueId(), ...data_options });
+    const onAdd = (dt) => {
+        if (helper.current) helper.current.push({ id: uniqueId(), type: dt, data: '' });
     };
 
     const onRemove = (index: number) => {
@@ -40,12 +40,14 @@ export default function ArrayItem({ name, data_options, ...props }: JsonFormItem
                         <span className="empty-records">No records yet</span>
                     ) : (
                         data.map(({ id, ...child_props }: any, index: number) => {
+                            let item_name = `${name}.${index}`;
                             if (!child_props.type) child_props.type = 'text';
+                            if (child_props.type === 'text') item_name = `${item_name}.data`;
 
                             return (
                                 <div className="item-wrap" key={id || `${name}-${index}`}>
-                                    <InputItem name={`${name}.${index}.data`} {...child_props} />
-                                    {child_props.remove && data.length > 1 && (
+                                    <InputItem name={item_name} {...child_props} />
+                                    {props.remove && (
                                         <RemoveOption onClick={() => onRemove(index)} />
                                     )}
                                 </div>
@@ -57,7 +59,7 @@ export default function ArrayItem({ name, data_options, ...props }: JsonFormItem
 
             {props.add && (
                 <div className="buttons">
-                    <AddOption onClick={onAdd} />
+                    <AddOption onClick={() => onAdd(data_type)} />
                 </div>
             )}
         </div>

@@ -23,13 +23,9 @@ $pending: #f29339;
 
         .icon {
             font-size: 0.7em;
-        }
 
-        &:not(:disabled) {
-            .icon {
-                &.remove {
-                    color: $error;
-                }
+            &.remove {
+                color: $error;
             }
         }
     }

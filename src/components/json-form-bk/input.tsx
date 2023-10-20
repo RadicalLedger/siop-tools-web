@@ -7,6 +7,8 @@ export default function InputItem({ type, ...props }: JsonFormInputItemProps) {
     if (!props.data_type) props.data_type = 'text';
 
     if (type === 'array' || type === 'object-array') {
+        if (type === 'object-array') props.data_type = 'object';
+
         return <ArrayItem {...props} />;
     }
 

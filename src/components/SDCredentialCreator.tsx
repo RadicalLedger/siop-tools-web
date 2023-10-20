@@ -216,6 +216,8 @@ export default function SDCredentialCreator() {
         return true;
     }
 
+    const onJsonFormValues = (values) => {};
+
     return (
         <div>
             <Grid container spacing={3}>
@@ -224,7 +226,7 @@ export default function SDCredentialCreator() {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <JsonForm />
+                    <JsonForm onSubmit={onJsonFormValues} />
                     {/* <List>
                         {inputComponentList.map((i: number) => {
                             return <InputComponent key={`sd-credential-input-${i}`} index={i} />;
