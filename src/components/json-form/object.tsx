@@ -2,12 +2,16 @@ import React from 'react';
 import { FieldArray } from 'formik';
 import InputItem from './input';
 import { IconButton, Tooltip } from '@material-ui/core';
-import { uniqueId } from 'lodash';
+import _, { uniqueId } from 'lodash';
 import AddOption from './add-option';
 import RemoveOption from './remove-option';
 import TextItem from './text';
 
-export default function ObjectItem({ name, data_options, ...props }: JsonFormItemProps) {
+export default function ObjectItem({
+    name,
+    data_options = { type: 'object' },
+    ...props
+}: JsonFormItemProps) {
     const helper: any = React.useRef(null);
 
     const getValues = (obj, str) => {
@@ -17,8 +21,15 @@ export default function ObjectItem({ name, data_options, ...props }: JsonFormIte
     };
 
     const onAdd = () => {
-        if (helper.current)
-            helper.current.push({ id: uniqueId(), type: 'object', ...data_options });
+        /* set a unique id to sample data */
+        if (Array.isArray(data_options?.data)) {
+            for (let i = 0; i < data_options.data.length; i++) {
+                const element = data_options?.data[i];
+                if (!element?.id) element.id = uniqueId();
+            }
+        }
+
+        if (helper.current) helper.current.push({ id: uniqueId(), ...data_options });
     };
 
     const onRemove = (index: number) => {
@@ -28,7 +39,10 @@ export default function ObjectItem({ name, data_options, ...props }: JsonFormIte
     return (
         <div className="object-item">
             <div className="items-wrap">
-                <TextItem className="key-text-item" name={name} />
+                <TextItem
+                    className="key-text-item"
+                    name={`${name.split('.').slice(0, -1).join('.')}.attribute`}
+                />
                 <div className="array-item">
                     <FieldArray
                         name={name}
@@ -62,14 +76,13 @@ export default function ObjectItem({ name, data_options, ...props }: JsonFormIte
                             );
                         }}
                     />
+                    {props.add && (
+                        <div className="buttons">
+                            <AddOption onClick={onAdd} />
+                        </div>
+                    )}
                 </div>
             </div>
-
-            {props.add && (
-                <div className="buttons">
-                    <AddOption onClick={onAdd} />
-                </div>
-            )}
         </div>
     );
 }

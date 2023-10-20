@@ -2,17 +2,19 @@ import React from 'react';
 import './styles/index.scss';
 import Form from '../form';
 import * as Yup from 'yup';
-import { Button } from '@material-ui/core';
+import { Button, TextField } from '@material-ui/core';
 import InputItem from './input';
-import _, { filter, uniqueId } from 'lodash';
+import _, { uniqueId } from 'lodash';
+import ReactJson from 'react-json-view';
 
 const initialValues = {
     data: [
         {
             id: uniqueId(),
             type: 'object',
+            data_type: 'array',
             data_options: { type: 'text', remove: true },
-            key: '@context',
+            attribute: '@context',
             add: true,
             data: [
                 {
@@ -32,70 +34,77 @@ const initialValues = {
         {
             id: uniqueId(),
             type: 'object',
-            key: 'id',
+            data_type: 'text',
+            attribute: 'id',
             data: [{ id: uniqueId(), type: 'text', data: 'http://localhost:8080/verify/1' }]
         },
         {
             id: uniqueId(),
             type: 'object',
-            key: 'issuanceDate',
+            data_type: 'text',
+            attribute: 'issuanceDate',
             data: [{ id: uniqueId(), type: 'text', data: new Date().toISOString() }]
         },
         {
             id: uniqueId(),
             type: 'object',
-            key: 'type',
+            data_type: 'text',
+            attribute: 'type',
             data: [{ id: uniqueId(), type: 'text', data: 'VerifiableCredential' }]
         },
         {
             id: uniqueId(),
             type: 'object',
-            key: 'issuer',
+            data_type: 'text',
+            attribute: 'issuer',
             data: [
                 {
                     id: uniqueId(),
                     type: 'text',
-                    data: 'did:key:z6Mkoqgh9AppS2s28onvE4Qy9jwDBJ8ZqRdBtoWLSsRL57Jj'
+                    data: 'did:attribute:z6Mkoqgh9AppS2s28onvE4Qy9jwDBJ8ZqRdBtoWLSsRL57Jj'
                 }
             ]
         },
         {
             id: uniqueId(),
             type: 'object',
+            data_type: 'object-array',
             data_options: {
                 type: 'object',
                 data: [{ type: 'text', data: '' }],
                 remove: true
             },
-            key: 'credentialSubject',
+            attribute: 'credentialSubject',
             add: true,
             data: [
                 {
                     id: uniqueId(),
                     type: 'object',
-                    key: 'type',
+                    data_type: 'array',
+                    attribute: 'type',
                     remove: true,
                     data: [
                         {
                             id: uniqueId(),
-                            type: 'array',
-                            data: [{ id: uniqueId(), type: 'text', data: 'DemoCredential' }]
+                            type: 'text',
+                            data: 'DemoCredential'
                         }
                     ]
                 },
                 {
                     id: uniqueId(),
                     type: 'object',
-                    key: 'customAttribute',
-                    data_options: { id: uniqueId(), type: 'text', data: '', remove: true },
+                    data_type: 'array',
+                    attribute: 'customAttribute',
+                    data_options: { type: 'text', data: '', remove: true },
                     add: true,
                     remove: true,
                     data: [
                         {
                             id: uniqueId(),
-                            type: 'array',
+                            type: 'text',
                             remove: true,
-                            data: [{ id: uniqueId(), type: 'text', data: '', remove: true }]
+                            data: ''
                         }
                     ]
                 }
@@ -109,6 +118,8 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function JsonForm({ onSubmit }) {
+    const [jsonValue, setJsonValue] = React.useState({});
+
     const filterJson = React.useCallback((obj) => {
         let data;
 
@@ -130,8 +141,9 @@ export default function JsonForm({ onSubmit }) {
     }, []);
 
     const onSubmitForm = (values: any) => {
+        setJsonValue(values);
         console.log(JSON.stringify(values, null, 4));
-        console.log(JSON.stringify(filterJson(values), null, 4));
+        //console.log(JSON.stringify(filterJson(values), null, 4));
     };
 
     return (
@@ -152,10 +164,35 @@ export default function JsonForm({ onSubmit }) {
                     add={true}
                 />
 
-                <Button variant="contained" color="primary" aria-label="add" type="submit">
-                    Submit
-                </Button>
+                <div className="submit-btn-wrap">
+                    <Button
+                        className="submit-json-btn"
+                        variant="contained"
+                        color="primary"
+                        aria-label="add"
+                        type="submit">
+                        Save Object
+                    </Button>
+                </div>
             </Form>
+
+            {/* <TextField
+                className="json-view"
+                variant="outlined"
+                multiline={true}
+                rows={20}
+                InputProps={{ readOnly: true }}
+                value={JSON.stringify(jsonValue, null, 4)}
+            /> */}
+
+            <ReactJson
+                name={false}
+                src={jsonValue}
+                theme="monokai"
+                displayDataTypes={false}
+                displayObjectSize={false}
+                enableClipboard={false}
+            />
         </div>
     );
 }

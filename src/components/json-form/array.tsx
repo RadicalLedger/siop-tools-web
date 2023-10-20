@@ -6,7 +6,11 @@ import { uniqueId } from 'lodash';
 import AddOption from './add-option';
 import RemoveOption from './remove-option';
 
-export default function ArrayItem({ name, data_options, ...props }: JsonFormItemProps) {
+export default function ArrayItem({
+    name,
+    data_options = { type: 'text' },
+    ...props
+}: JsonFormItemProps) {
     const helper: any = React.useRef(null);
 
     const getValues = (obj, str) => {
@@ -16,6 +20,14 @@ export default function ArrayItem({ name, data_options, ...props }: JsonFormItem
     };
 
     const onAdd = () => {
+        /* set a unique id to sample data */
+        if (Array.isArray(data_options?.data)) {
+            for (let i = 0; i < data_options.data.length; i++) {
+                const element = data_options?.data[i];
+                if (!element?.id) element.id = uniqueId();
+            }
+        }
+
         if (helper.current) helper.current.push({ id: uniqueId(), ...data_options });
     };
 

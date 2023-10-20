@@ -7,4 +7,15 @@
         display: grid;
         grid-template-columns: 30% auto;
     }
+
+    @media screen and (max-width: 960px) {
+        .items-wrap {
+            display: flex;
+            flex-direction: column;
+
+            .item-wrap {
+                padding-left: 20px;
+            }
+        }
+    }
 }

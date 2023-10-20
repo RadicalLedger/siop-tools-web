@@ -234,7 +234,7 @@ export default function SDCredentialCreator() {
                     </List> */}
                 </Grid>
 
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                     <Button
                         variant="contained"
                         color="primary"
@@ -269,7 +269,7 @@ export default function SDCredentialCreator() {
                         onClick={addNewCustomAttribute}>
                         Add Custom Attribute
                     </Button>
-                </Grid>
+                </Grid> */}
 
                 <Grid item xs={12}>
                     <div className={classes.root}>

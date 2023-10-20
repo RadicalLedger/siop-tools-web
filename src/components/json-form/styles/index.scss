@@ -6,6 +6,10 @@ $font-black: #2f2f2f;
 $pending: #f29339;
 
 .json-form-component {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
     .form {
         display: flex;
         flex-direction: column;
@@ -32,6 +36,21 @@ $pending: #f29339;
                 }
             }
         }
+    }
+
+    .submit-btn-wrap {
+        .submit-json-btn {
+            width: fit-content;
+        }
+    }
+
+    .json-view {
+        width: 100%;
+    }
+
+    .react-json-view {
+        padding: 10px;
+        border-radius: 7px;
     }
 
     @import './array-item';
