@@ -26,23 +26,22 @@ import base58 from 'base-58';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     setHolderPublicKey,
-    setInputComponentList,
     setSignerPrivateKey,
     setSignerPublicKey,
     setPublicKeyEncoding,
     setVC,
-    setKeyArray,
-    setValueArray,
     _holderPublicKey,
-    _inputComponentList,
     _signerPrivateKey,
     _signerPublicKey,
-    _keyArray,
-    _valueArray,
     _vc,
-    _publicKeyEncoding
+    _publicKeyEncoding,
+    _jsonValue,
+    setJsonValue,
+    _jsonEditorValue,
+    setJsonEditorValue
 } from '../redux/issueSlice';
 import JsonForm from './json-form';
+import _ from 'lodash';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -63,74 +62,16 @@ export default function SDCredentialCreator() {
     const signerPrivateKey = useSelector(_signerPrivateKey);
     const publicKeyEncoding = useSelector(_publicKeyEncoding);
     const signerPublicKey = useSelector(_signerPublicKey);
-    const inputComponentList = useSelector(_inputComponentList);
-    const keyArray = useSelector(_keyArray);
-    const valueArray = useSelector(_valueArray);
+    const jsonValue = useSelector(_jsonValue);
+    const jsonEditorValue = useSelector(_jsonEditorValue);
     const vc = useSelector(_vc);
     const dispatch = useDispatch();
     const classes = useStyles();
-
-    const customAttributeRef = React.useRef<{ value?: string }>({});
 
     const [snackBarState, setState] = React.useState<{ open: boolean; text: string }>({
         open: false,
         text: ''
     });
-
-    function addNewInput() {
-        const i = inputComponentList.length;
-        const newInputComponentList = [...inputComponentList];
-        const newKeyArray = [...keyArray, ''];
-        const newValueArray = [...valueArray, ''];
-        // keyArray.push('')
-        // valueArray.push('')
-        dispatch(setKeyArray(newKeyArray));
-        dispatch(setValueArray(newValueArray));
-        newInputComponentList.push(i);
-        dispatch(setInputComponentList(newInputComponentList));
-    }
-
-    function replacer(key, value) {
-        if (typeof value === 'string') {
-            return value.replace(/"/g, '').replace(/,/g, ', ').replace(/:/g, ':');
-        } else {
-            return value;
-        }
-    }
-
-    function addNewCustomAttribute() {
-        let i: number | null = null;
-        const newKeyArray = [...keyArray];
-        const newValueArray = [...valueArray];
-
-        let idx = newKeyArray.findIndex((_) => _ === 'credentialSubject');
-        if (idx < 0) {
-            i = inputComponentList.length;
-            idx = i;
-            const newInputComponentList = [...inputComponentList];
-            newInputComponentList.push(i);
-
-            newKeyArray.push('credentialSubject');
-            newValueArray.push(`{}`);
-        }
-
-        let data = isJson(newValueArray[idx]) ? eval(`(${newValueArray[idx]})`) : {};
-        let value = customAttributeRef.current.value;
-
-        if (!data.customAttribute) {
-            data['customAttribute'] = [];
-        }
-
-        if (isJson(value)) {
-            value = eval(`(${value})`);
-        }
-
-        data.customAttribute.push(value);
-
-        newValueArray[idx] = JSON.stringify(data, replacer);
-
-        dispatch(setValueArray(newValueArray));
-    }
 
     function handlePublicKeyInput(publicKey: string) {
         dispatch(setHolderPublicKey(publicKey));
@@ -145,7 +86,7 @@ export default function SDCredentialCreator() {
     }
 
     async function sign() {
-        const credential = zip(keyArray, valueArray);
+        const credential: any = _.cloneDeep(jsonValue);
         let publicKey = holderPublicKey;
 
         /* base58 to base64 */
@@ -192,31 +133,10 @@ export default function SDCredentialCreator() {
         });
     }
 
-    function zip(arr1: any, arr2: any, out: any = {}) {
-        arr1.map((val: any, idx: any) => {
-            let value = arr2[idx];
-
-            if (isJson(value)) {
-                value = eval(`(${value})`);
-            }
-
-            out[val] = value;
-        });
-
-        return out;
-    }
-
-    function isJson(str) {
-        try {
-            eval(`(${str})`);
-        } catch (error) {
-            return false;
-        }
-
-        return true;
-    }
-
-    const onJsonFormValues = (values) => {};
+    const onJsonFormValues = (values, data) => {
+        dispatch(setJsonValue(values?.data));
+        dispatch(setJsonEditorValue(data));
+    };
 
     return (
         <div>
@@ -226,50 +146,12 @@ export default function SDCredentialCreator() {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <JsonForm onSubmit={onJsonFormValues} />
-                    {/* <List>
-                        {inputComponentList.map((i: number) => {
-                            return <InputComponent key={`sd-credential-input-${i}`} index={i} />;
-                        })}
-                    </List> */}
+                    <JsonForm
+                        initialValues={jsonEditorValue}
+                        jsonValue={jsonValue}
+                        onSubmit={onJsonFormValues}
+                    />
                 </Grid>
-
-                {/* <Grid item xs={12}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        aria-label="add"
-                        onClick={addNewInput}
-                        disabled={
-                            keyArray[inputComponentList.length - 1] === '' ||
-                            valueArray[inputComponentList.length - 1] === ''
-                        }
-                        //TODO Add tooltip saying why this is disabled
-                    >
-                        Add more claims
-                    </Button>
-                </Grid>
-
-                <Grid item xs={12}>
-                    <List>
-                        <TextField
-                            inputRef={customAttributeRef}
-                            placeholder="Custom Attribute Value"
-                            variant="outlined"
-                            fullWidth
-                        />
-                    </List>
-                </Grid>
-
-                <Grid item xs={12}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        aria-label="add"
-                        onClick={addNewCustomAttribute}>
-                        Add Custom Attribute
-                    </Button>
-                </Grid> */}
 
                 <Grid item xs={12}>
                     <div className={classes.root}>
@@ -350,21 +232,6 @@ export default function SDCredentialCreator() {
                 message={snackBarState.text}
                 autoHideDuration={5000}
             />
-
-            {/* <Button
-                className={classes.elements}
-                color="primary" variant="outlined"
-                onClick={generateRandomKeys}
-            >Generate Random Keys</Button> */}
-
-            {/* <TextField
-                className={classes.elements}
-                value={state.signerPublicKey}
-                label="Signer's Public Key"
-                variant="outlined"
-                multiline
-                onClick={() => copyToClipboard(state.signerPublicKey)}
-            /> */}
         </div>
     );
 }

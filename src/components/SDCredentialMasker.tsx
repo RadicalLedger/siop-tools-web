@@ -41,7 +41,7 @@ export default function SDCredentialMasker() {
         const cred = credentials.map((cred: any) => {
             return JSON.parse(atob(cred));
         });
-        console.log(cred);
+
         try {
             const vp = await verifiable.presentation.create({
                 documentLoader: documentLoader,
