@@ -37,13 +37,15 @@ export default function ObjectItem({
     };
 
     return (
-        <div className="object-item">
+        <div data-flex={props.no_attribute} data-type={!!props.add} className="object-item">
             <div className="items-wrap">
-                <TextItem
-                    className="key-text-item"
-                    name={`${name.split('.').slice(0, -1).join('.')}.attribute`}
-                />
-                <div className="array-item">
+                {!props.no_attribute && (
+                    <TextItem
+                        className="key-text-item"
+                        name={`${name.split('.').slice(0, -1).join('.')}.attribute`}
+                    />
+                )}
+                <div data-add={!!props.add} className="array-item">
                     <FieldArray
                         name={name}
                         render={(arrayHelpers) => {

@@ -110,15 +110,46 @@ const initialState: IssueState = {
                         type: 'object',
                         data_type: 'array',
                         attribute: 'customAttribute',
-                        data_options: { type: 'text', data: '', remove: true },
+                        data_options: {
+                            type: 'object',
+                            data_type: 'object',
+                            remove: true,
+                            no_attribute: true,
+                            data: [
+                                {
+                                    type: 'object',
+                                    attribute: 'name',
+                                    data: [{ type: 'text', data: '' }]
+                                },
+                                {
+                                    type: 'object',
+                                    attribute: 'value',
+                                    data: [{ type: 'text', data: '' }]
+                                }
+                            ]
+                        },
                         add: true,
                         remove: true,
                         data: [
                             {
                                 id: _.uniqueId(),
-                                type: 'text',
+                                type: 'object',
+                                data_type: 'object',
                                 remove: true,
-                                data: 'test value 1'
+                                no_attribute: true,
+                                attribute: '',
+                                data: [
+                                    {
+                                        type: 'object',
+                                        attribute: 'name',
+                                        data: [{ type: 'text', data: 'test name 1' }]
+                                    },
+                                    {
+                                        type: 'object',
+                                        attribute: 'value',
+                                        data: [{ type: 'text', data: 'test value 1' }]
+                                    }
+                                ]
                             }
                         ]
                     }

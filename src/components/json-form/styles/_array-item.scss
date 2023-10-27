@@ -3,6 +3,15 @@
     flex-direction: column;
     gap: 15px;
     width: 100%;
+    border: 1px solid #000;
+    border-right: 0;
+    border-top: 0;
+    padding-left: 10px;
+    padding-bottom: 10px;
+
+    &[data-add='false'] {
+        border: 0;
+    }
 
     .buttons {
         display: flex;

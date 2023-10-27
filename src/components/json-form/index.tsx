@@ -33,13 +33,22 @@ export default function JsonForm({ initialValues = {}, jsonValue, onSubmit }: Pr
                     data[obj.attribute].push(filterJson(element));
                 }
             } else if (obj.data_type === 'object') {
-                data[obj.attribute] = {};
+                let temp = {};
 
                 for (let i = 0; i < obj.data.length; i++) {
                     const element = obj.data[i];
 
-                    data[obj.attribute][element.attribute] =
-                        filterJson(element)?.[element.attribute];
+                    if (element.no_attribute) {
+                        temp = filterJson(element)?.[element.attribute];
+                    } else {
+                        temp[element.attribute] = filterJson(element)?.[element.attribute];
+                    }
+                }
+
+                if (obj.no_attribute) {
+                    data = temp;
+                } else {
+                    data[obj.attribute] = temp;
                 }
             } else {
                 data[obj.attribute] = filterJson(obj.data?.[0]);

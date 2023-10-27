@@ -36,7 +36,7 @@ export default function ArrayItem({
     };
 
     return (
-        <div className="array-item">
+        <div data-add={!!props.add} className="array-item">
             <FieldArray
                 name={name}
                 render={(arrayHelpers) => {

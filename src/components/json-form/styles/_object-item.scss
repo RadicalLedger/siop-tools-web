@@ -8,6 +8,12 @@
         grid-template-columns: 30% auto;
     }
 
+    &[data-flex='true'] {
+        .items-wrap {
+            display: flex;
+        }
+    }
+
     @media screen and (max-width: 960px) {
         .items-wrap {
             display: flex;
