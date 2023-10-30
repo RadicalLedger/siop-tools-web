@@ -42,6 +42,7 @@ import {
 } from '../redux/issueSlice';
 import JsonForm from './json-form';
 import _ from 'lodash';
+import AddToExtensionButton from './add-to-extension-btn';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -221,6 +222,13 @@ export default function SDCredentialCreator() {
                         multiline
                         fullWidth
                         onClick={() => copyToClipboard(vc)}
+                    />
+                </Grid>
+
+                <Grid item xs={12}>
+                    <AddToExtensionButton
+                        data={jsonValue}
+                        disabled={!Object.entries(jsonValue).length}
                     />
                 </Grid>
             </Grid>
