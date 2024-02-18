@@ -8,6 +8,8 @@ interface HdDidState {
     masterPrivateKey: string;
     masterChainCode: string;
     masterPublicKey: string;
+    masterAddress: string;
+    masterDid: string;
     derivationPath: string;
     childPrivateKey: string;
     childChainCode: string;
@@ -30,6 +32,8 @@ const initialState: HdDidState = {
     childPrivateKey: '',
     childChainCode: '',
     childPublicKey: '',
+    masterAddress: '',
+    masterDid: '',
     address: '',
     did: '',
     validMnemonic: false,
@@ -58,6 +62,12 @@ export const hdDidSlice = createSlice({
         },
         setMasterPublicKey: (state, action: PayloadAction<string>) => {
             state.masterPublicKey = action.payload;
+        },
+        setMasterAddress: (state, action: PayloadAction<string>) => {
+            state.masterAddress = action.payload;
+        },
+        setMasterDID: (state, action: PayloadAction<string>) => {
+            state.masterDid = action.payload;
         },
         setDerivationPath: (state, action: PayloadAction<string>) => {
             state.derivationPath = action.payload;
@@ -99,6 +109,8 @@ export const {
     setMasterChainCode,
     setMasterPrivateKey,
     setMasterPublicKey,
+    setMasterAddress,
+    setMasterDID,
     setMnemonic,
     setSeed,
     setStrength,
@@ -113,6 +125,8 @@ export const _seed = (state: RootState) => state.hdDid.seed;
 export const _masterPrivateKey = (state: RootState) => state.hdDid.masterPrivateKey;
 export const _masterChainCode = (state: RootState) => state.hdDid.masterChainCode;
 export const _masterPublicKey = (state: RootState) => state.hdDid.masterPublicKey;
+export const _masterAddress = (state: RootState) => state.hdDid.masterAddress;
+export const _masterDid = (state: RootState) => state.hdDid.masterDid;
 export const _derivationPath = (state: RootState) => state.hdDid.derivationPath;
 export const _childPrivateKey = (state: RootState) => state.hdDid.childPrivateKey;
 export const _childChainCode = (state: RootState) => state.hdDid.childChainCode;

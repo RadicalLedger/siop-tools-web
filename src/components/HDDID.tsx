@@ -35,6 +35,8 @@ import {
     _masterChainCode,
     _masterPrivateKey,
     _masterPublicKey,
+    _masterAddress,
+    _masterDid,
     _mnemonic,
     _seed,
     _strength,
@@ -48,6 +50,8 @@ import {
     setMasterChainCode,
     setMasterPrivateKey,
     setMasterPublicKey,
+    setMasterAddress,
+    setMasterDID,
     setMnemonic,
     setSeed,
     setMnemonicValidity,
@@ -86,6 +90,8 @@ export default function HDDID() {
     const masterPrivateKey = useSelector(_masterPrivateKey);
     const masterChainCode = useSelector(_masterChainCode);
     const masterPublicKey = useSelector(_masterPublicKey);
+    const masterAddress = useSelector(_masterAddress);
+    const masterDid = useSelector(_masterDid);
     const derivationPath = useSelector(_derivationPath);
     const childPrivateKey = useSelector(_childPrivateKey);
     const childChainCode = useSelector(_childChainCode);
@@ -108,11 +114,11 @@ export default function HDDID() {
         const val = parseInt(numBit);
         dispatch(setStrength(val));
         if (seed !== '') {
-            handleGenerateSeed();
+            handleGenerateSeed(val);
         }
     };
 
-    useEffect(() => {
+    React.useEffect(() => {
         const topMnemonicsStored = localStorage.getItem('topMnemonics');
         try {
             dispatch(setTopMnemonics(JSON.parse(topMnemonicsStored || '[]')));
@@ -141,8 +147,9 @@ export default function HDDID() {
         localStorage.setItem('topMnemonics', JSON.stringify(newTopMnemonics));
     }
 
-    function handleGenerateSeed(): void {
-        const mnemonic = generateMnemonic(strength);
+    function handleGenerateSeed(val?: any): void {
+        let length: number = val ? parseInt(val) : strength;
+        const mnemonic = generateMnemonic(length);
         addMnemonics(mnemonic);
         const seed = getSeedFromMnemonic(mnemonic);
 
@@ -155,8 +162,10 @@ export default function HDDID() {
         dispatch(setSeed(seed));
         try {
             const wallet = new Wallet(Types.SEED, seed);
-            const { privateKey, publicKey, chainCode } = await wallet.getMasterKeys();
+            const { privateKey, publicKey, chainCode, did, address } = await wallet.getMasterKeys();
 
+            dispatch(setMasterAddress(address));
+            dispatch(setMasterDID(did));
             dispatch(setMasterPrivateKey(privateKey as string));
             dispatch(setMasterChainCode(chainCode));
             dispatch(setMasterPublicKey(publicKey));
@@ -388,6 +397,22 @@ export default function HDDID() {
                         <TextFieldWithCopy
                             label="Master Chain Code"
                             value={masterChainCode}
+                            callback={callback}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <TextFieldWithCopy
+                            label="Master Address"
+                            value={masterAddress}
+                            callback={callback}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <TextFieldWithCopy
+                            label="Master DID"
+                            value={masterDid}
                             callback={callback}
                         />
                     </Grid>
